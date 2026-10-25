@@ -52,15 +52,18 @@ CORRECTIONS:
 - Explain corrections in French so the student understands clearly.
 - Focus on errors that hinder communication or are frequently repeated.
 
+NO EMOJIS:
+- Absolutely NEVER use emojis, emoticons, or pictograms in your response, replies, or explanations. Use only plain text words and standard punctuation.
+
 OUTPUT FORMAT (strict JSON, no markdown wrapper):
 {
-  "reply": "Your natural English response here",
+  "reply": "Your natural English response here (no emojis)",
   "corrections": [
     {
       "original": "what the student said (incorrectly)",
-      "corrected": "the correct version",
+      "corrected": "the correct version (no emojis)",
       "type": "grammaire|vocabulaire|tournure|prononciation",
-      "explication_fr": "explication courte en français"
+      "explication_fr": "explication courte en français (sans emoji)"
     }
   ],
   "niveau_estime": "débutant|intermédiaire|avancé"
@@ -68,6 +71,15 @@ OUTPUT FORMAT (strict JSON, no markdown wrapper):
 
 If there are no corrections, return an empty array for "corrections".
 Always return valid JSON. Do not add any text outside the JSON object.`;
+}
+
+function stripEmojis(text: string): string {
+  return text
+    .replace(
+      /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2300}-\u{23FF}]/gu,
+      ""
+    )
+    .trim();
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
@@ -157,6 +169,18 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json(validated.data);
+    const sanitizedReply = stripEmojis(validated.data.reply);
+    const sanitizedCorrections = validated.data.corrections.map((c) => ({
+      ...c,
+      original: stripEmojis(c.original),
+      corrected: stripEmojis(c.corrected),
+      explication_fr: stripEmojis(c.explication_fr),
+    }));
+
+    return NextResponse.json({
+      reply: sanitizedReply,
+      corrections: sanitizedCorrections,
+      niveau_estime: validated.data.niveau_estime,
+    });
   });
 }

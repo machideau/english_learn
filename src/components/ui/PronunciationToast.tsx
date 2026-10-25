@@ -82,8 +82,23 @@ export function PronunciationToast({
             >
               {issue.word}
             </span>
-            <span className="text-brown-300 leading-relaxed">
-              → {issue.suggestion}
+            <span className="text-brown-300 leading-relaxed inline-flex items-center gap-1">
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-brown-200 shrink-0"
+                aria-hidden="true"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+              <span>{issue.suggestion}</span>
               {issue.phonetic && (
                 <span className="ml-1 text-brown-200 font-mono">
                   [{issue.phonetic}]

@@ -209,7 +209,7 @@ export const AvatarCanvas = forwardRef<AvatarHandle, AvatarCanvasProps>(
               );
 
               // Attendre la fin via l'AudioBufferSourceNode de TalkingHead
-              // On poll isSpeaking — plus fiable que de dépendre des callbacks internes
+              // On poll isSpeaking : plus fiable que de dépendre des callbacks internes
               await new Promise<void>((resolve) => {
                 let resolved = false;
                 const done = () => { if (!resolved) { resolved = true; resolve(); } };
@@ -228,7 +228,7 @@ export const AvatarCanvas = forwardRef<AvatarHandle, AvatarCanvasProps>(
               });
 
             } else {
-              // Pas d'AudioBuffer — fallback : HTMLAudio + speakText pour lip-sync
+              // Pas d'AudioBuffer : fallback HTMLAudio + speakText pour lip-sync
               await new Promise<void>((resolve) => {
                 let resolved = false;
                 const done = () => { if (!resolved) { resolved = true; resolve(); } };
@@ -248,7 +248,7 @@ export const AvatarCanvas = forwardRef<AvatarHandle, AvatarCanvasProps>(
             }
 
           } else if (audioBase64 && mimeType) {
-            // ctx inaccessible — HTMLAudio seul, pas de lip-sync
+            // ctx inaccessible : HTMLAudio seul, pas de lip-sync
             await new Promise<void>((resolve) => {
               let resolved = false;
               const done = () => { if (!resolved) { resolved = true; resolve(); } };

@@ -75,7 +75,7 @@ export const AVATARS: AvatarConfig[] = [
 ];
 
 // Voix Fish Audio disponibles via fish-audio/s2.1-pro-free:free
-// L'API ne requiert pas de "voice" pour ce modèle — chaîne vide = voix par défaut
+// L'API ne requiert pas de "voice" pour ce modèle : chaîne vide = voix par défaut
 export const VOICES: VoiceConfig[] = [
   {
     id: "",

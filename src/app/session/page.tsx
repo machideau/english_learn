@@ -242,7 +242,21 @@ function SessionCard({
                           <li key={i} className="card-inset text-xs">
                             <div className="flex flex-wrap items-baseline gap-1.5">
                               <span className="line-through text-brown-200 italic">{c.original}</span>
-                              <span className="text-brown-100 select-none">&#8594;</span>
+                              <svg
+                                width="11"
+                                height="11"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-brown-200 shrink-0 self-center"
+                                aria-hidden="true"
+                              >
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                              </svg>
                               <span className="font-medium text-brown-600">{c.corrected}</span>
                             </div>
                             <p className="mt-1 text-brown-300">{c.explication_fr}</p>

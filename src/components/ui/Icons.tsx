@@ -1,4 +1,4 @@
-// Icônes SVG inline — sans emojis
+// Icônes SVG inline sans emojis
 // Toutes les icônes sont 20×20 par défaut, accessibles avec aria-hidden
 
 interface IconProps {

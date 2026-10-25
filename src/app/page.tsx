@@ -380,8 +380,10 @@ export default function HomePage() {
             </h1>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden />
-              <span className="text-[10px] sm:text-[11px] text-brown-400 font-medium">
-                {selectedAvatar.label} • Tuteur IA
+              <span className="text-[10px] sm:text-[11px] text-brown-400 font-medium inline-flex items-center gap-1.5">
+                <span>{selectedAvatar.label}</span>
+                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
+                <span>Tuteur IA</span>
               </span>
             </div>
           </div>
@@ -521,7 +523,9 @@ export default function HomePage() {
                 aria-label="Personnaliser l'avatar et la voix"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                {selectedAvatar.label} • {selectedVoice.label}
+                <span>{selectedAvatar.label}</span>
+                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
+                <span>{selectedVoice.label}</span>
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="opacity-50">
                   <path d="M9 2l1 1-7 7H2V9l7-7z"/>
                 </svg>
@@ -614,7 +618,7 @@ export default function HomePage() {
                   <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
                 <span>{selectedAvatar.label}</span>
-                <span className="text-brown-300">•</span>
+                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
                 <span>{selectedVoice.label}</span>
               </button>
             </div>

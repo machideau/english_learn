@@ -62,7 +62,21 @@ export function CorrectionCard({ correction, index }: CorrectionCardProps) {
         >
           {correction.original}
         </span>
-        <span className="text-brown-100 select-none" aria-hidden>&#8594;</span>
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-brown-200 shrink-0 self-center"
+          aria-hidden="true"
+        >
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <polyline points="12 5 19 12 12 19" />
+        </svg>
         <span
           className="font-medium text-brown-600"
           aria-label="Version correcte"
