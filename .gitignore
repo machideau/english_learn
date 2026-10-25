@@ -1,0 +1,18 @@
+# Build
+.next
+out
+
+# Dépendances
+node_modules
+
+# Secrets
+.env.local
+.env*.local
+
+# TypeScript
+tsconfig.tsbuildinfo
+
+# Éditeur
+.DS_Store
+.vscode
+*.swp
