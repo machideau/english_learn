@@ -21,7 +21,7 @@ export function AvatarVoiceSelector({
   onClose,
   disabled,
 }: AvatarVoiceSelectorProps) {
-  const [tab, setTab] = useState<"avatar" | "voice">("voice");
+  const [tab, setTab] = useState<"avatar" | "voice">("avatar");
   const [previewingVoiceId, setPreviewingVoiceId] = useState<string | null>(null);
   const [loadingVoiceId, setLoadingVoiceId] = useState<string | null>(null);
 
@@ -30,6 +30,8 @@ export function AvatarVoiceSelector({
 
   const femaleVoices = DEEPGRAM_VOICES.filter((v) => v.gender === "F");
   const maleVoices = DEEPGRAM_VOICES.filter((v) => v.gender === "M");
+  const femaleAvatars = AVATARS.filter((a) => a.body === "F");
+  const maleAvatars = AVATARS.filter((a) => a.body === "M");
 
   const stopPreview = useCallback(() => {
     if (audioRef.current) {
@@ -197,84 +199,96 @@ export function AvatarVoiceSelector({
         {/* Contenu */}
         <div className="flex-1 overflow-y-auto p-4">
           {tab === "avatar" && (
-            <div className="grid grid-cols-2 gap-3">
-              {AVATARS.map((avatar) => {
-                const selected = avatar.id === avatarId;
-                return (
-                  <button
-                    key={avatar.id}
-                    onClick={() => {
-                      if (!disabled) {
-                        onAvatarChange(avatar);
-                        handleClose();
-                      }
-                    }}
-                    disabled={disabled}
-                    className={[
-                      "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-left",
-                      selected
-                        ? "border-terracotta-400 bg-terracotta-50 shadow-sm"
-                        : "border-cream-200 bg-cream-50 hover:border-terracotta-200 hover:bg-cream-100",
-                      disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
-                    ].join(" ")}
-                    aria-pressed={selected}
-                    aria-label={`Sélectionner l'avatar ${avatar.label}`}
-                  >
-                    {/* Silhouette avatar */}
-                    <div
-                      className={[
-                        "w-16 h-20 rounded-xl flex items-center justify-center",
-                        avatar.body === "F" ? "bg-terracotta-100" : "bg-sage-100",
-                      ].join(" ")}
-                    >
-                      <svg
-                        width="40"
-                        height="56"
-                        viewBox="0 0 40 56"
-                        fill="none"
-                        aria-hidden="true"
-                      >
-                        <ellipse
-                          cx="20"
-                          cy="16"
-                          rx="11"
-                          ry="13"
-                          fill={avatar.body === "F" ? "#c4512e" : "#7d5a3c"}
-                          opacity="0.5"
-                        />
-                        <path
-                          d={
-                            avatar.body === "F"
-                              ? "M6 56 C6 38 10 33 20 31 C30 33 34 38 34 56"
-                              : "M4 56 C4 38 9 33 20 31 C31 33 36 38 36 56"
-                          }
-                          fill={avatar.body === "F" ? "#c4512e" : "#7d5a3c"}
-                          opacity="0.5"
-                        />
-                      </svg>
-                    </div>
+            <div className="space-y-4">
+              {[
+                { label: "Avatars féminins", avatars: femaleAvatars },
+                { label: "Avatars masculins", avatars: maleAvatars },
+              ].map(({ label, avatars }) => (
+                <div key={label}>
+                  <p className="text-[11px] font-semibold text-brown-300 uppercase tracking-widest mb-2">
+                    {label}
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {avatars.map((avatar) => {
+                      const selected = avatar.id === avatarId;
+                      return (
+                        <button
+                          key={avatar.id}
+                          onClick={() => {
+                            if (!disabled) {
+                              onAvatarChange(avatar);
+                              handleClose();
+                            }
+                          }}
+                          disabled={disabled}
+                          className={[
+                            "relative flex flex-col items-center gap-2 p-3.5 rounded-xl border-2 transition-all text-left",
+                            selected
+                              ? "border-terracotta-400 bg-terracotta-50 shadow-sm"
+                              : "border-cream-200 bg-cream-50 hover:border-terracotta-200 hover:bg-cream-100",
+                            disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+                          ].join(" ")}
+                          aria-pressed={selected}
+                          aria-label={`Sélectionner l'avatar ${avatar.label}`}
+                        >
+                          {/* Silhouette avatar */}
+                          <div
+                            className={[
+                              "w-14 h-18 rounded-xl flex items-center justify-center",
+                              avatar.body === "F" ? "bg-terracotta-100" : "bg-sage-100",
+                            ].join(" ")}
+                          >
+                            <svg
+                              width="36"
+                              height="48"
+                              viewBox="0 0 40 56"
+                              fill="none"
+                              aria-hidden="true"
+                            >
+                              <ellipse
+                                cx="20"
+                                cy="16"
+                                rx="11"
+                                ry="13"
+                                fill={avatar.body === "F" ? "#c4512e" : "#5d6d5a"}
+                                opacity="0.5"
+                              />
+                              <path
+                                d={
+                                  avatar.body === "F"
+                                    ? "M6 56 C6 38 10 33 20 31 C30 33 34 38 34 56"
+                                    : "M4 56 C4 38 8 33 20 31 C32 33 36 38 36 56"
+                                }
+                                fill={avatar.body === "F" ? "#c4512e" : "#5d6d5a"}
+                                opacity="0.5"
+                              />
+                            </svg>
+                          </div>
 
-                    <div className="text-center">
-                      <p className="text-sm font-semibold text-brown-600">{avatar.label}</p>
-                      <p className="text-[11px] text-brown-300 mt-0.5">{avatar.description}</p>
-                    </div>
+                          <div className="text-center w-full">
+                            <p className="text-sm font-semibold text-brown-600 truncate">{avatar.label}</p>
+                            <p className="text-[11px] text-brown-300 mt-0.5 truncate">{avatar.description}</p>
+                          </div>
 
-                    {selected && (
-                      <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-terracotta-500 text-white flex items-center justify-center">
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-                          <polyline
-                            points="2,5 4,7.5 8,2.5"
-                            stroke="white"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
+                          {selected && (
+                            <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-terracotta-500 text-white flex items-center justify-center">
+                              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                                <polyline
+                                  points="2,5 4,7.5 8,2.5"
+                                  stroke="white"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 

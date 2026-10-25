@@ -21,6 +21,7 @@ export interface VoiceConfig {
 }
 
 export const AVATARS: AvatarConfig[] = [
+  // ── Avatars féminins ────────────────────────────────────────────────────────
   {
     id: "brunette",
     label: "Sarah",
@@ -42,12 +43,34 @@ export const AVATARS: AvatarConfig[] = [
     body: "F",
     description: "Style anime",
   },
+  // ── Avatars masculins ───────────────────────────────────────────────────────
+  {
+    id: "david",
+    label: "David",
+    url: "/talkinghead/david.glb",
+    body: "M",
+    description: "Tuteur bienveillant et posé",
+  },
+  {
+    id: "james",
+    label: "James",
+    url: "/talkinghead/james.glb",
+    body: "M",
+    description: "Tuteur dynamique et moderne",
+  },
+  {
+    id: "bruce",
+    label: "Bruce",
+    url: "/talkinghead/bruce.glb",
+    body: "M",
+    description: "Style élégant et pro",
+  },
   {
     id: "avaturn",
     label: "Alex",
     url: "/talkinghead/avaturn.glb",
     body: "M",
-    description: "Tuteur moderne",
+    description: "Tuteur contemporain",
   },
 ];
 
