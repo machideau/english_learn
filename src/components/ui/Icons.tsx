@@ -166,3 +166,59 @@ export const SparklesIcon = icon(
   '<path d="M15 13l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/>'
 );
 
+// Répéter / Repeat after me
+export const RepeatIcon = icon(
+  '<path d="M4 10V7a4 4 0 0 1 4-4h8"/>' +
+  '<path d="M16 3l2 2-2 2"/>' +
+  '<path d="M16 10v3a4 4 0 0 1-4 4H4"/>' +
+  '<path d="M4 17l-2-2 2-2"/>'
+);
+
+// Casque audio / dictée
+export const HeadphonesIcon = icon(
+  '<path d="M3 14a7 7 0 1 1 14 0"/>' +
+  '<rect x="2" y="14" width="4" height="5" rx="1"/>' +
+  '<rect x="14" y="14" width="4" height="5" rx="1"/>'
+);
+
+// Clavier / saisie texte
+export const KeyboardIcon = icon(
+  '<rect x="2" y="5" width="16" height="10" rx="2"/>' +
+  '<path d="M6 9h.01M10 9h.01M14 9h.01M6 13h8M4 9h.01M16 9h.01"/>'
+);
+
+// Texte à corriger / éditeur
+export const FileEditIcon = icon(
+  '<path d="M12 3H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9z"/>' +
+  '<path d="M14 3v6h4"/>' +
+  '<path d="M7 13h6"/>' +
+  '<path d="M7 10h3"/>'
+);
+
+// Feu / streak
+export const FlameIcon = icon(
+  '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>'
+);
+
+// Téléchargement
+export const DownloadIcon = icon(
+  '<path d="M14 2v6h4"/>' +
+  '<path d="M12 3H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9z"/>' +
+  '<path d="M10 8v7"/>' +
+  '<path d="M7.5 12.5l2.5 2.5 2.5-2.5"/>'
+);
+
+// Graduation / leçon
+export const GraduationIcon = icon(
+  '<path d="M2 10L10 6l8 4-8 4z" fill="currentColor" fillOpacity="0.3" stroke="currentColor"/>' +
+  '<path d="M2 10l8 4 8-4"/>' +
+  '<path d="M16 12v5c-2 1-4 1.5-6 1.5S6 18 4 17v-5"/>' +
+  '<path d="M18 10v5"/>'
+);
+
+// Retour / undo
+export const UndoIcon = icon(
+  '<path d="M3 7v6h6"/>' +
+  '<path d="M3 13C6 8 11 7 15 10l4 3"/>'
+);
+

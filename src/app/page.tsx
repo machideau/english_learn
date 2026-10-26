@@ -9,10 +9,14 @@ import { TopicSelector } from "@/components/ui/TopicSelector";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { PronunciationToast } from "@/components/ui/PronunciationToast";
 import { AvatarVoiceSelector } from "@/components/ui/AvatarVoiceSelector";
+import { StreakBadge } from "@/components/ui/StreakBadge";
+import { ExportButton } from "@/components/ui/ExportButton";
 import { ConversationView } from "@/components/conversation/ConversationView";
 import { TextInput } from "@/components/conversation/TextInput";
 import { CorrectionCard } from "@/components/corrections/CorrectionCard";
 import { FlashcardModal } from "@/components/flashcards/FlashcardModal";
+import { SRSFlashcardModal } from "@/components/flashcards/SRSFlashcardModal";
+import { ModeModal } from "@/components/modes/ModeModal";
 import {
   CalendarIcon,
   MessageIcon,
@@ -20,14 +24,20 @@ import {
   CheckIcon,
   CardsIcon,
   MicIcon,
+  RepeatIcon,
+  HeadphonesIcon,
+  FileEditIcon,
+  GraduationIcon,
 } from "@/components/ui/Icons";
 
 import { useMicrophone } from "@/hooks/useMicrophone";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { useSession } from "@/hooks/useSession";
+import { useSRS } from "@/hooks/useSRS";
+import { useStreak } from "@/hooks/useStreak";
 
 import type { AvatarHandle } from "@/components/avatar/AvatarCanvas";
-import type { Level, MicState, ChatApiResponse, PronunciationScore } from "@/types";
+import type { AppMode, Level, MicState, ChatApiResponse, PronunciationScore, Correction } from "@/types";
 import { getAvatar, getVoice, DEFAULT_AVATAR_ID, DEFAULT_VOICE_ID } from "@/lib/avatars-voices";
 import type { AvatarConfig, VoiceConfig } from "@/lib/avatars-voices";
 
@@ -87,6 +97,8 @@ export default function HomePage() {
   const mic = useMicrophone(); // fallback si Web Speech indisponible
 
   const { currentSession, sessions, startSession, addMessage, endSession } = useSession();
+  const { cards: srsCards, dueCards, addCorrections: addSRSCards, reviewCard } = useSRS();
+  const { streak, recordActivity, recordSession } = useStreak();
 
   const [level, setLevel] = useState<Level>("intermédiaire");
   const [topic, setTopic] = useState<string>("");
@@ -101,9 +113,12 @@ export default function HomePage() {
   const [rightTab, setRightTab] = useState<"chat" | "corrections">("chat");
   const [mobileTab, setMobileTab] = useState<"studio" | "chat" | "corrections">("studio");
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [isSRSOpen, setIsSRSOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig>(() => getAvatar(DEFAULT_AVATAR_ID));
   const [selectedVoice, setSelectedVoice] = useState<VoiceConfig>(() => getVoice(DEFAULT_VOICE_ID));
   const [showPersonalize, setShowPersonalize] = useState(false);
+  const [activeMode, setActiveMode] = useState<AppMode>("conversation");
+  const [isModeModalOpen, setIsModeModalOpen] = useState(false);
   useEffect(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     setTranscriptionMode(SR ? "webspeech" : "openrouter");
@@ -127,6 +142,8 @@ export default function HomePage() {
       setMicButtonState("processing");
       setIsTyping(true);
       avatarRef.current?.setEmotion("thinking");
+      // Enregistrer l'activité pour le streak
+      recordActivity();
 
       try {
         const history = session.messages.map((m) => ({
@@ -154,6 +171,11 @@ export default function HomePage() {
         const chatData: ChatApiResponse = await chatRes.json();
         setIsTyping(false);
         if (chatData.niveau_estime !== level) setLevel(chatData.niveau_estime);
+
+        // Ajouter les nouvelles corrections au SRS
+        if (chatData.corrections.length > 0) {
+          addSRSCards(chatData.corrections);
+        }
 
         // ── TTS : essayer OpenRouter d'abord, fallback Web Speech ──
         setMicButtonState("speaking");
@@ -351,15 +373,27 @@ export default function HomePage() {
 
   const handleEndSession = useCallback(() => {
     endSession();
+    recordSession();
     setSessionActive(false);
     setMicButtonState("idle");
     window.speechSynthesis?.cancel();
     avatarRef.current?.stopSpeaking();
     avatarRef.current?.setEmotion("neutral");
-  }, [endSession]);
+  }, [endSession, recordSession]);
 
   const allCorrections = currentSession?.allCorrections ?? [];
   const displayError = error || mic.error || speechRec.error;
+
+  // ── Ouvrir un mode spécial ────────────────────────────────────────────────
+  const openMode = useCallback((mode: AppMode) => {
+    setActiveMode(mode);
+    setIsModeModalOpen(true);
+  }, []);
+
+  // ── Correction de texte → ajouter aux flashcards SRS ────────────────────
+  const handleTextCorrections = useCallback((corrections: Correction[]) => {
+    addSRSCards(corrections);
+  }, [addSRSCards]);
 
   return (
     <div className="flex flex-col h-dvh max-h-dvh overflow-hidden bg-cream-100">
@@ -411,6 +445,8 @@ export default function HomePage() {
             )}
           </Link>
 
+          {/* Streak compact */}
+          <StreakBadge streak={streak} compact />
           {sessionActive && (
             <button
               onClick={handleEndSession}
@@ -605,8 +641,8 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Bouton Personnaliser avatar + voix */}
-            <div className="w-full flex justify-start">
+            {/* Bouton Personnaliser + raccourcis modes */}
+            <div className="w-full flex items-center justify-between gap-2 flex-wrap">
               <button
                 onClick={() => setShowPersonalize(true)}
                 disabled={micButtonState === "processing" || micButtonState === "speaking"}
@@ -621,6 +657,41 @@ export default function HomePage() {
                 <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
                 <span>{selectedVoice.label}</span>
               </button>
+
+              {/* Raccourcis accès modes */}
+              <div className="flex items-center gap-1">
+                {(
+                  [
+                    { mode: "repeat-after-me" as AppMode, Icon: RepeatIcon, label: "Répète après moi" },
+                    { mode: "dictation" as AppMode, Icon: HeadphonesIcon, label: "Dictée" },
+                    { mode: "text-correction" as AppMode, Icon: FileEditIcon, label: "Corriger texte" },
+                    { mode: "lesson" as AppMode, Icon: GraduationIcon, label: "Leçons" },
+                  ] as const
+                ).map(({ mode, Icon, label }) => (
+                  <button
+                    key={mode}
+                    onClick={() => openMode(mode)}
+                    title={label}
+                    aria-label={label}
+                    className="p-1.5 rounded-lg bg-cream-100 hover:bg-terracotta-50 border border-cream-200 hover:border-terracotta-200 text-brown-400 hover:text-terracotta-500 transition-colors"
+                  >
+                    <Icon size={14} />
+                  </button>
+                ))}
+                {dueCards.length > 0 && (
+                  <button
+                    onClick={() => setIsSRSOpen(true)}
+                    title={`${dueCards.length} carte${dueCards.length > 1 ? "s" : ""} à réviser`}
+                    aria-label="Révision espacée"
+                    className="p-1.5 rounded-lg bg-terracotta-50 hover:bg-terracotta-100 border border-terracotta-200 text-terracotta-500 hover:text-terracotta-600 transition-colors relative"
+                  >
+                    <CardsIcon size={14} />
+                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-terracotta-500 text-white text-[8px] font-bold flex items-center justify-center">
+                      {dueCards.length > 9 ? "9+" : dueCards.length}
+                    </span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </section>
@@ -763,6 +834,31 @@ export default function HomePage() {
         onClose={() => setIsFlashcardsOpen(false)}
         corrections={allCorrections}
         title="Révision de la séance en cours"
+      />
+
+      {/* Modale SRS — Répétition espacée */}
+      <SRSFlashcardModal
+        isOpen={isSRSOpen}
+        onClose={() => setIsSRSOpen(false)}
+        cards={srsCards}
+        dueCards={dueCards}
+        onGrade={reviewCard}
+        title="Révision espacée"
+      />
+
+      {/* Modale des modes spéciaux */}
+      <ModeModal
+        mode={activeMode}
+        isOpen={isModeModalOpen}
+        onClose={() => setIsModeModalOpen(false)}
+        level={level}
+        topic={topic || undefined}
+        voice={selectedVoice}
+        onCorrectionsFound={handleTextCorrections}
+        onStartConversation={(prompt) => {
+          setIsModeModalOpen(false);
+          handleUserMessage(prompt);
+        }}
       />
 
       {/* Modale de personnalisation avatar + voix */}

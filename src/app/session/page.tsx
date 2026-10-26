@@ -17,6 +17,11 @@ import {
   CardsIcon,
 } from "@/components/ui/Icons";
 import { FlashcardModal } from "@/components/flashcards/FlashcardModal";
+import { SRSFlashcardModal } from "@/components/flashcards/SRSFlashcardModal";
+import { StreakBadge } from "@/components/ui/StreakBadge";
+import { ExportButton } from "@/components/ui/ExportButton";
+import { useSRS } from "@/hooks/useSRS";
+import { useStreak } from "@/hooks/useStreak";
 
 const STORAGE_KEY = "english_tutor_sessions";
 
@@ -166,14 +171,14 @@ function SessionCard({
           >
             {open ? "Réduire" : "Bilan"}
           </button>
+          <ExportButton session={session} compact />
           <button
             onClick={() => onDelete(session.id)}
             className="p-1.5 text-brown-100 hover:text-terracotta-500 transition-colors rounded hover:bg-terracotta-50"
             aria-label="Supprimer cette session"
           >
             <XIcon size={14} />
-          </button>
-        </div>
+          </button>        </div>
 
       </div>
 
@@ -352,8 +357,11 @@ function SessionCard({
 export default function SessionPage() {
   const [sessions, setSessions] = useState<ConversationSession[]>([]);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [isSRSOpen, setIsSRSOpen] = useState(false);
   const [reviewCorrections, setReviewCorrections] = useState<Correction[]>([]);
   const [reviewTitle, setReviewTitle] = useState("Révision des erreurs");
+  const { cards: srsCards, dueCards, reviewCard } = useSRS();
+  const { streak } = useStreak();
 
   useEffect(() => {
     setSessions(loadSessions().reverse());
@@ -413,12 +421,12 @@ export default function SessionPage() {
             </h1>
           </div>
           {sessions.length > 0 && (
-            <button
-              onClick={handleClearAll}
-              className="btn-ghost text-xs"
-            >
-              Tout effacer
-            </button>
+            <div className="flex items-center gap-2">
+              <ExportButton sessions={[...sessions].reverse()} label="Tout exporter" />
+              <button onClick={handleClearAll} className="btn-ghost text-xs">
+                Tout effacer
+              </button>
+            </div>
           )}
         </div>
       </header>
@@ -442,6 +450,30 @@ export default function SessionPage() {
           </div>
         ) : (
           <div className="space-y-4">
+            {/* Streak */}
+            <StreakBadge streak={streak} />
+
+            {/* Bannière SRS si cartes dues */}
+            {dueCards.length > 0 && (
+              <div className="card bg-gradient-to-br from-terracotta-50 to-cream-100 border-terracotta-200 p-4 flex items-center justify-between gap-3 animate-fade-in">
+                <div>
+                  <p className="text-sm font-semibold text-terracotta-700">
+                    {dueCards.length} carte{dueCards.length > 1 ? "s" : ""} à réviser aujourd'hui
+                  </p>
+                  <p className="text-xs text-brown-300 mt-0.5">
+                    Répétition espacée — vos erreurs passées
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsSRSOpen(true)}
+                  className="btn-primary text-xs py-2 px-4 shrink-0 flex items-center gap-1.5"
+                >
+                  <CardsIcon size={13} />
+                  Réviser
+                </button>
+              </div>
+            )}
+
             {/* Bannière Mode Flashcards Global */}
             {allCorrections.length > 0 && (
               <div className="card bg-gradient-to-br from-cream-50 via-cream-100 to-terracotta-50/40 border-terracotta-200/80 shadow-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
@@ -496,6 +528,16 @@ export default function SessionPage() {
         onClose={() => setIsReviewOpen(false)}
         corrections={reviewCorrections}
         title={reviewTitle}
+      />
+
+      {/* Modale SRS */}
+      <SRSFlashcardModal
+        isOpen={isSRSOpen}
+        onClose={() => setIsSRSOpen(false)}
+        cards={srsCards}
+        dueCards={dueCards}
+        onGrade={reviewCard}
+        title="Répétition espacée"
       />
     </div>
   );
