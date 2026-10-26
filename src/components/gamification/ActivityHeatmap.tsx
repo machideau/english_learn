@@ -1,5 +1,6 @@
 "use client";
 import { useMemo } from "react";
+import { FlameIcon } from "@/components/ui/Icons";
 
 interface ActivityHeatmapProps {
   activeDates?: string[]; // liste de dates "YYYY-MM-DD"
@@ -48,7 +49,7 @@ export function ActivityHeatmap({
         </div>
         {currentStreak > 0 && (
           <span className="text-terracotta-600 font-bold flex items-center gap-1">
-            🔥 {currentStreak} j. de suite
+            <FlameIcon size={13} /> {currentStreak} j. de suite
           </span>
         )}
       </div>

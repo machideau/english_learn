@@ -42,7 +42,7 @@ export function DailyGoalTracker({
                 : "bg-terracotta-100 text-terracotta-600 border border-terracotta-200",
             ].join(" ")}
           >
-            {isDone ? <CheckIcon size={12} /> : "🎯"}
+            {isDone ? <CheckIcon size={12} /> : <TrophyIcon size={12} />}
           </div>
           <div>
             <div className="flex items-center gap-1.5 font-bold text-brown-800 text-[11px]">

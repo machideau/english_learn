@@ -100,8 +100,8 @@ export function OnboardingOverlay() {
           </div>
 
           {slide.hint && (
-            <p className="text-xs text-brown-300 bg-cream-100 border border-cream-200 rounded-lg px-4 py-2.5 w-full">
-              💡 {slide.hint}
+            <p className="text-xs text-brown-400 bg-cream-100 border border-cream-200 rounded-lg px-4 py-2.5 w-full">
+              Conseil : {slide.hint}
             </p>
           )}
         </div>

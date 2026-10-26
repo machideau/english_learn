@@ -27,7 +27,7 @@ export function ShareableScoreCard({
 
   if (!isOpen) return null;
 
-  const shareText = `🚀 J'ai pratiqué mon anglais oral avec mon tuteur IA 3D !\n\n📊 Mon bilan :\n• Niveau : ${data.levelTitle}\n• Fluidité : ${data.fluencyScore}%\n• Précision : ${data.accuracyScore}%\n• Série de pratique : ${data.streakDays} jours 🔥\n${data.roleplayCompletedTitle ? `• Scénario validé : ${data.roleplayCompletedTitle}\n` : ""}\nTestez gratuitement votre niveau : https://english-tutor-ai.app`;
+  const shareText = `J'ai pratiqué mon anglais oral avec mon tuteur IA 3D !\n\nMon bilan :\n• Niveau : ${data.levelTitle}\n• Fluidité : ${data.fluencyScore}%\n• Précision : ${data.accuracyScore}%\n• Série de pratique : ${data.streakDays} jours\n${data.roleplayCompletedTitle ? `• Scénario validé : ${data.roleplayCompletedTitle}\n` : ""}\nTestez gratuitement votre niveau : https://english-tutor-ai.app`;
 
   const handleShare = async () => {
     if (typeof navigator !== "undefined" && navigator.share) {

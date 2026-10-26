@@ -251,7 +251,7 @@ export function PlacementTestModal({
                   {currentQ.promptEn}
                 </div>
                 <div className="text-[11px] text-brown-400 italic">
-                  🇫🇷 {currentQ.promptFr}
+                  (FR) {currentQ.promptFr}
                 </div>
               </div>
 

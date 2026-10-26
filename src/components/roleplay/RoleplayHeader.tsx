@@ -122,7 +122,7 @@ export function RoleplayHeader({
           aria-live="polite"
         >
           <CheckIcon size={16} />
-          <span>🎯 Objectif atteint : {toastLabel}</span>
+          <span>Objectif atteint : {toastLabel}</span>
         </div>
       )}
 
@@ -162,7 +162,7 @@ export function RoleplayHeader({
                   </p>
                   {!isDone && obj.hint && (
                     <p className="mt-1 text-[10px] text-terracotta-500/90 italic">
-                      💡 {obj.hint}
+                      Indice : {obj.hint}
                     </p>
                   )}
                 </div>

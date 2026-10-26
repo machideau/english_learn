@@ -884,7 +884,7 @@ export default function HomePage() {
                     {micButtonState === "speaking"
                       ? "L'avatar parle… Écoute suspendue"
                       : isHandsFreeListening
-                      ? "🎧 Parlez naturellement (envoi auto après silence)"
+                      ? "Parlez naturellement (envoi auto après silence)"
                       : "Traitement en cours…"}
                   </span>
                 </div>

@@ -127,7 +127,7 @@ export function RoleplayDebriefModal({
 
           {/* Points clés retenus */}
           <div className="bg-cream-100/70 border border-cream-200 p-3.5 rounded-xl text-xs space-y-1.5">
-            <span className="font-bold text-brown-700 block">💡 Conseil du tuteur :</span>
+            <span className="font-bold text-brown-700 block">Conseil du tuteur :</span>
             <p className="text-brown-500 leading-relaxed text-[11px]">
               {isSuccess
                 ? "Excellente réactivité ! Vous avez su rester dans votre rôle tout en répondant avec clarté et naturel."

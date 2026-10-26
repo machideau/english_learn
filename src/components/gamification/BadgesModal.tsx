@@ -1,8 +1,38 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Badge, loadBadges } from "@/lib/badges";
-import { XIcon, TrophyIcon } from "@/components/ui/Icons";
+import {
+  XIcon,
+  TrophyIcon,
+  SparklesIcon,
+  FlameIcon,
+  MessageIcon,
+  BookIcon,
+  MaskIcon,
+  HeadphonesIcon,
+} from "@/components/ui/Icons";
 import { playAchievementFanfare } from "@/lib/sound-effects";
+
+function renderBadgeIcon(iconKey: string) {
+  switch (iconKey) {
+    case "sparkles":
+      return <SparklesIcon size={20} className="text-terracotta-500" />;
+    case "flame":
+    case "streak":
+      return <FlameIcon size={20} className="text-orange-500" />;
+    case "message":
+      return <MessageIcon size={20} className="text-blue-500" />;
+    case "book":
+      return <BookIcon size={20} className="text-amber-600" />;
+    case "mask":
+      return <MaskIcon size={20} className="text-purple-500" />;
+    case "headphones":
+      return <HeadphonesIcon size={20} className="text-emerald-500" />;
+    case "trophy":
+    default:
+      return <TrophyIcon size={20} className="text-terracotta-600" />;
+  }
+}
 
 interface BadgesModalProps {
   onClose: () => void;
@@ -91,13 +121,13 @@ export function BadgesModal({ onClose, stats }: BadgesModalProps) {
               >
                 <div
                   className={[
-                    "w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-xs",
+                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs",
                     badge.unlocked
                       ? "bg-terracotta-50 border border-terracotta-200"
-                      : "bg-cream-200/60 grayscale",
+                      : "bg-cream-200/60 opacity-60",
                   ].join(" ")}
                 >
-                  {badge.icon}
+                  {renderBadgeIcon(badge.icon)}
                 </div>
 
                 <div className="flex-1 min-w-0">

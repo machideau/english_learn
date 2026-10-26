@@ -161,7 +161,7 @@ export function PhoneticWordBubble({
           {/* Explication phonétique */}
           {activeWord.tipFr && (
             <p className="text-[11px] text-brown-600 leading-relaxed mb-2.5">
-              💡 {activeWord.tipFr}
+              Astuce : {activeWord.tipFr}
             </p>
           )}
 

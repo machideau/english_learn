@@ -78,10 +78,11 @@ export default function OgImage() {
                 alignItems: "center",
                 justifyContent: "center",
                 color: "white",
-                fontSize: 24,
+                fontSize: 16,
+                fontWeight: 800,
               }}
             >
-              🎙
+              AI
             </div>
             <span
               style={{
