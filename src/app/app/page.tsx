@@ -63,6 +63,7 @@ import type { AvatarConfig, VoiceConfig } from "@/lib/avatars-voices";
 import { AudioWaveformVisualizer } from "@/components/audio/AudioWaveformVisualizer";
 import { SpeechSpeedControl, type SpeechSpeed } from "@/components/audio/SpeechSpeedControl";
 import { DailyGoalTracker } from "@/components/gamification/DailyGoalTracker";
+import { BadgesModal } from "@/components/gamification/BadgesModal";
 import { playSuccessChime } from "@/lib/sound-effects";
 
 const AvatarCanvas = dynamic(
@@ -180,6 +181,9 @@ export default function HomePage() {
 
   // ── Menu header drawer (actions secondaires) ──────────────────────────────
   const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
+
+  // ── Badges & Trophées ─────────────────────────────────────────────────────
+  const [isBadgesModalOpen, setIsBadgesModalOpen] = useState(false);
 
   // ── Menu modes dans le dock ───────────────────────────────────────────────
   const [isModesMenuOpen, setIsModesMenuOpen] = useState(false);
@@ -597,6 +601,7 @@ export default function HomePage() {
             todayMessages={userMessagesCount}
             goalTarget={5}
             stats={gamificationStats}
+            onOpenBadges={() => setIsBadgesModalOpen(true)}
             className="hidden sm:inline-flex"
           />
 
@@ -678,6 +683,14 @@ export default function HomePage() {
                   >
                     <CompassIcon size={14} />
                     Parcours A1-C1
+                  </button>
+                  <button
+                    role="menuitem"
+                    onClick={() => { setIsBadgesModalOpen(true); setIsHeaderMenuOpen(false); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-brown-600 hover:bg-cream-100 transition-colors"
+                  >
+                    <TrophyIcon size={14} />
+                    Trophées & Badges
                   </button>
                   <hr className="border-cream-200 my-1" />
                   <button
@@ -1259,6 +1272,13 @@ export default function HomePage() {
           data={shareCardData}
         />
       )}
+
+      {/* 6. Modale Trophées & Badges */}
+      <BadgesModal
+        isOpen={isBadgesModalOpen}
+        onClose={() => setIsBadgesModalOpen(false)}
+        stats={gamificationStats}
+      />
     </div>
   );
 }

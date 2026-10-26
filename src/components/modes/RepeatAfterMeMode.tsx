@@ -187,6 +187,26 @@ export function RepeatAfterMeMode({ level, topic, voiceId, onClose }: RepeatAfte
     setError(null);
   }, [currentIdx, sentences.length]);
 
+  // Raccourcis clavier (avant les early returns pour respecter les rules of hooks)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      // Espace → écouter
+      if (e.key === " " && stepState === "listening") {
+        e.preventDefault();
+        playCurrentSentence();
+      }
+      // Entrée → répéter
+      if (e.key === "Enter" && stepState === "listening") {
+        e.preventDefault();
+        startRecording();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [stepState, playCurrentSentence, startRecording]);
+
   if (stepState === "loading" && sentences.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-12">
@@ -263,26 +283,6 @@ export function RepeatAfterMeMode({ level, topic, voiceId, onClose }: RepeatAfte
 
   const lastResult = results[results.length - 1];
   const showResult = stepState === "result" && lastResult?.sentence === currentSentence?.text;
-
-  // Raccourcis clavier
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement)?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA") return;
-      // Espace → écouter
-      if (e.key === " " && stepState === "listening") {
-        e.preventDefault();
-        playCurrentSentence();
-      }
-      // Entrée → répéter
-      if (e.key === "Enter" && stepState === "listening") {
-        e.preventDefault();
-        startRecording();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [stepState, playCurrentSentence, startRecording]);
 
   return (
     <div className="space-y-4 animate-fade-in">

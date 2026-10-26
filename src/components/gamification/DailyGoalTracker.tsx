@@ -6,7 +6,7 @@ import { BadgesModal } from "./BadgesModal";
 interface DailyGoalTrackerProps {
   todayMessages: number;
   goalTarget?: number;
-  stats: {
+  stats?: {
     totalSessions: number;
     totalMessages: number;
     currentStreak: number;
@@ -16,6 +16,7 @@ interface DailyGoalTrackerProps {
     todayMessages: number;
   };
   className?: string;
+  onOpenBadges?: () => void;
 }
 
 export function DailyGoalTracker({
@@ -23,10 +24,19 @@ export function DailyGoalTracker({
   goalTarget = 5,
   stats,
   className = "",
+  onOpenBadges,
 }: DailyGoalTrackerProps) {
   const [showBadges, setShowBadges] = useState(false);
   const isDone = todayMessages >= goalTarget;
   const progressPct = Math.min(100, Math.round((todayMessages / goalTarget) * 100));
+
+  const handleOpenBadges = () => {
+    if (onOpenBadges) {
+      onOpenBadges();
+    } else {
+      setShowBadges(true);
+    }
+  };
 
   return (
     <>
@@ -62,7 +72,7 @@ export function DailyGoalTracker({
 
         {/* Bouton Badges */}
         <button
-          onClick={() => setShowBadges(true)}
+          onClick={handleOpenBadges}
           className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-cream-100/90 hover:bg-cream-200/90 text-brown-600 hover:text-brown-800 font-semibold text-[11px] border border-cream-200/90 transition-all active:scale-95"
           title="Voir vos badges et accomplissements"
         >
@@ -71,7 +81,7 @@ export function DailyGoalTracker({
         </button>
       </div>
 
-      {showBadges && (
+      {showBadges && stats && (
         <BadgesModal
           onClose={() => setShowBadges(false)}
           stats={stats}

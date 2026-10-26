@@ -101,7 +101,7 @@ export function WordLookupModal({
                 </span>
               )}
             </div>
-            <p className="text-xs text-brown-400 mt-0.5">Dictionnaire contextuel & Prononciation</p>
+            <p className="text-xs text-brown-400 mt-0.5">{entry?.phonetic ?? "EN"}</p>
           </div>
           <button
             onClick={onClose}
@@ -164,7 +164,7 @@ export function WordLookupModal({
         {/* Action SRS */}
         <div className="pt-2 border-t border-cream-200/80 flex items-center justify-between gap-3">
           <p className="text-[11px] text-brown-400">
-            {added ? "Carte enregistrée dans vos révisions SM-2" : "Mémorisez ce mot avec l'algorithme SRS"}
+            {added ? "Enregistré" : "Mémoriser avec SRS"}
           </p>
           <button
             onClick={handleSaveToSRS}
@@ -184,7 +184,7 @@ export function WordLookupModal({
             ) : (
               <>
                 <BookIcon size={14} />
-                <span>Mémoriser (SRS)</span>
+                <span>Mémoriser</span>
               </>
             )}
           </button>

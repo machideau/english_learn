@@ -215,7 +215,7 @@ export function FlashcardModal({
               </h2>
               {!isFinished && totalCards > 0 && (
                 <p className="text-xs text-brown-300">
-                  Carte {currentIndex + 1} sur {totalCards}
+                  {currentIndex + 1} / {totalCards}
                 </p>
               )}
             </div>
@@ -259,11 +259,8 @@ export function FlashcardModal({
 
               <div>
                 <h3 className="text-lg font-semibold text-brown-600">
-                  Session de révision terminée !
+                  Révision terminée !
                 </h3>
-                <p className="text-sm text-brown-300 mt-1">
-                  Voici le bilan de votre pratique de mémorisation.
-                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4 max-w-xs mx-auto">
@@ -348,7 +345,7 @@ export function FlashcardModal({
                     </span>
                   )}
                   <span className="text-[11px] text-brown-200 italic">
-                    {isFlipped ? "Verso : Solution & Explication" : "Recto : Cliquez pour révéler"}
+                    {isFlipped ? "Correction" : "Cliquez pour révéler"}
                   </span>
                 </div>
 
@@ -361,14 +358,6 @@ export function FlashcardModal({
                       </p>
                       <p className="text-lg font-serif text-brown-600 italic bg-terracotta-50/60 inline-block px-3 py-1.5 rounded-md border border-terracotta-100">
                         "{currentCard.original}"
-                      </p>
-                      <p className="text-xs text-brown-400 mt-4 inline-flex items-center justify-center gap-1.5">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
-                          <path d="M9 18h6" />
-                          <path d="M10 22h4" />
-                        </svg>
-                        <span>Comment diriez-vous cela correctement en anglais ?</span>
                       </p>
                     </div>
                   ) : (
@@ -412,9 +401,7 @@ export function FlashcardModal({
                 {/* Indication basse */}
                 <div className="text-center pt-2 border-t border-cream-200/60">
                   <p className="text-[11px] text-brown-200">
-                    {isFlipped
-                      ? "Écoutez l'audio ou choisissez votre niveau de maîtrise ci-dessous"
-                      : "Espace ou clic pour vérifier"}
+                    {isFlipped ? "Évaluez votre réponse" : "Espace ou clic pour vérifier"}
                   </p>
                 </div>
               </div>
@@ -427,7 +414,7 @@ export function FlashcardModal({
                     className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-600 border border-terracotta-200 text-xs font-semibold transition-all active:scale-[0.98]"
                   >
                     <XIcon size={14} />
-                    À retravailler (1)
+                    A revoir
                   </button>
 
                   <button
@@ -445,7 +432,7 @@ export function FlashcardModal({
                     className="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-sm active:scale-[0.98]"
                   >
                     <CheckIcon size={14} />
-                    Bien compris ! (2)
+                    Compris !
                   </button>
                 </div>
               ) : (
@@ -462,17 +449,12 @@ export function FlashcardModal({
 
         {/* Footer avec compteurs */}
         {!isFinished && totalCards > 0 && (
-          <div className="px-5 py-3 bg-cream-100 border-t border-cream-200 flex items-center justify-between text-xs text-brown-300">
-            <div className="flex items-center gap-4">
-              <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
-                <CheckIcon size={12} /> {mastered.length} maîtrisé{mastered.length > 1 ? "s" : ""}
-              </span>
-              <span className="inline-flex items-center gap-1 text-terracotta-600 font-medium">
-                <XIcon size={12} /> {toReview.length} à revoir
-              </span>
-            </div>
-            <span className="text-[11px] text-brown-200">
-              Raccourcis : [Espace] [1] [2]
+          <div className="px-5 py-3 bg-cream-100 border-t border-cream-200 flex items-center gap-4 text-xs text-brown-300">
+            <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
+              <CheckIcon size={12} /> {mastered.length} ok
+            </span>
+            <span className="inline-flex items-center gap-1 text-terracotta-600 font-medium">
+              <XIcon size={12} /> {toReview.length} à revoir
             </span>
           </div>
         )}

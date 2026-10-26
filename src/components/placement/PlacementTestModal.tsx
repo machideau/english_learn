@@ -146,8 +146,8 @@ export function PlacementTestModal({
               </h2>
               <p className="text-[11px] text-brown-400">
                 {result
-                  ? "Votre résultat officiel et recommandations"
-                  : `Question ${currentIndex + 1} sur ${PLACEMENT_QUESTIONS.length}`}
+                  ? `Niveau ${result?.cefrLevel}`
+                  : `Question ${currentIndex + 1}/${PLACEMENT_QUESTIONS.length}`}
               </p>
             </div>
           </div>
@@ -166,11 +166,8 @@ export function PlacementTestModal({
             <div className="py-12 flex flex-col items-center justify-center text-center gap-3">
               <div className="w-12 h-12 rounded-full border-4 border-terracotta-200 border-t-terracotta-600 animate-spin" />
               <div className="font-bold text-sm text-brown-700">
-                Analyse de votre expression en cours…
+                Analyse en cours…
               </div>
-              <p className="text-xs text-brown-400 max-w-xs">
-                Calcul de la richesse lexicale, de la structure grammaticale et de l'aisance orale.
-              </p>
             </div>
           ) : result ? (
             /* Écran de résultat */
@@ -213,7 +210,7 @@ export function PlacementTestModal({
 
               {/* Recommandations */}
               <div className="bg-cream-100/70 p-3.5 rounded-xl border border-cream-200 text-xs space-y-1.5">
-                <span className="font-bold text-brown-700 block">Prochaines étapes recommandées :</span>
+                <span className="font-bold text-brown-700 block">À travailler :</span>
                 <ul className="space-y-1 text-[11px] text-brown-500">
                   {result.recommendations.map((rec, i) => (
                     <li key={i} className="flex items-start gap-1.5">
@@ -284,7 +281,7 @@ export function PlacementTestModal({
                     ].join(" ")}
                   >
                     {isRecording ? <StopIcon size={14} /> : <MicIcon size={14} />}
-                    <span>{isRecording ? "Arrêter l'enregistrement" : "Répondre à la voix"}</span>
+                    <span>{isRecording ? "Arrêter" : "Micro"}</span>
                   </button>
 
                   <button
@@ -292,7 +289,7 @@ export function PlacementTestModal({
                     disabled={!currentText.trim()}
                     className="px-4 py-2 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 disabled:opacity-40 disabled:pointer-events-none text-white text-xs font-semibold transition-colors shadow-sm flex items-center gap-1.5"
                   >
-                    <span>{isLastQuestion ? "Terminer & Évaluer" : "Question suivante"}</span>
+                    <span>{isLastQuestion ? "Terminer" : "Suivant"}</span>
                     <svg
                       width="12"
                       height="12"

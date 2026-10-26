@@ -72,10 +72,10 @@ export function RoadmapModal({
             </div>
             <div>
               <h2 id="roadmap-title" className="text-sm font-bold text-brown-800">
-                Parcours d'Apprentissage & Roadmap
+                Parcours A1 → C1
               </h2>
               <p className="text-xs text-brown-400">
-                Votre progression guidée du niveau A1 (Bases) jusqu'à C1 (Maîtrise).
+                {doneCount}/{totalSteps} étapes complétées
               </p>
             </div>
           </div>
@@ -89,12 +89,8 @@ export function RoadmapModal({
         </div>
 
         {/* Barre de progression globale */}
-        <div className="px-6 py-3 bg-white border-b border-cream-200 flex items-center justify-between gap-4 shrink-0">
+        <div className="px-6 py-3 bg-white border-b border-cream-200 flex items-center gap-4 shrink-0">
           <div className="flex-1">
-            <div className="flex justify-between text-xs font-semibold text-brown-700 mb-1.5">
-              <span>Progression du parcours</span>
-              <span className="text-terracotta-600">{progressPercent}% terminé</span>
-            </div>
             <div className="w-full h-2 bg-cream-100 rounded-full overflow-hidden border border-cream-200">
               <div
                 className="h-full bg-gradient-to-r from-terracotta-400 to-terracotta-600 transition-all duration-300 rounded-full"
@@ -103,7 +99,7 @@ export function RoadmapModal({
             </div>
           </div>
           <div className="text-xs text-brown-400 font-medium shrink-0">
-            {doneCount}/{totalSteps} étapes
+            {progressPercent}%
           </div>
         </div>
 

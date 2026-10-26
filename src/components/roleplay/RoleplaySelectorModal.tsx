@@ -58,10 +58,10 @@ export function RoleplaySelectorModal({
             </div>
             <div>
               <h2 id="roleplay-modal-title" className="text-base font-bold text-brown-800">
-                Mises en Situation & Roleplay
+                Scénarios Roleplay
               </h2>
               <p className="text-xs text-brown-400">
-                Entraînez-vous dans des situations réelles avec objectifs secrets et débriefing.
+                Situations réelles avec objectifs et débriefing.
               </p>
             </div>
           </div>
@@ -125,18 +125,18 @@ export function RoleplaySelectorModal({
 
                   <div className="bg-cream-50 rounded-xl p-2.5 border border-cream-100 mb-3 space-y-1">
                     <div className="text-[11px] text-brown-600">
-                      <span className="font-semibold text-brown-700">Interlocuteur : </span>
-                      {scenario.avatarName} ({scenario.avatarRole})
+                      <span className="font-semibold text-brown-700">Avec : </span>
+                      {scenario.avatarName}
                     </div>
                     <div className="text-[11px] text-brown-600">
-                      <span className="font-semibold text-brown-700">Votre rôle : </span>
+                      <span className="font-semibold text-brown-700">Rôle : </span>
                       {scenario.userRole}
                     </div>
                   </div>
 
                   <div className="space-y-1 mb-4">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-brown-300">
-                      Objectifs à valider ({scenario.objectives.length}) :
+                      Objectifs ({scenario.objectives.length})
                     </span>
                     <ul className="space-y-1">
                       {scenario.objectives.map((obj) => (
@@ -156,7 +156,7 @@ export function RoleplaySelectorModal({
                   }}
                   className="w-full py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 active:bg-terracotta-700 text-white text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
-                  <span>Démarrer ce rôle</span>
+                  <span>Démarrer</span>
                   <svg
                     width="14"
                     height="14"

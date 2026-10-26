@@ -9,25 +9,29 @@ export function NavBar() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-cream-50/90 backdrop-blur-md border-b border-cream-200/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Logo size={34} />
-            <span className="font-bold text-brown-700 tracking-tight text-sm">English Tutor AI</span>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-2">
+          {/* Logo + titre */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Logo size={34} className="shrink-0" />
+            <span className="font-bold text-brown-700 tracking-tight text-sm truncate">English Tutor AI</span>
           </div>
 
-          <nav className="hidden sm:flex items-center gap-6 text-sm text-brown-400 font-medium">
+          {/* Nav desktop */}
+          <nav className="hidden sm:flex items-center gap-6 text-sm text-brown-400 font-medium shrink-0">
             <a href="#features" className="hover:text-brown-600 transition-colors">Fonctionnalités</a>
             <a href="#how-it-works" className="hover:text-brown-600 transition-colors">Comment ça marche</a>
             <a href="#faq" className="hover:text-brown-600 transition-colors">FAQ</a>
           </nav>
 
-          <div className="flex items-center gap-2">
+          {/* Actions : CTA + hamburger */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <Link
               href="/app"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white text-sm font-semibold transition-all shadow-sm active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white text-xs sm:text-sm font-semibold transition-all shadow-sm active:scale-95 whitespace-nowrap"
             >
-              Commencer gratuitement
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <span className="sm:hidden">Commencer</span>
+              <span className="hidden sm:inline">Commencer gratuitement</span>
+              <svg className="hidden sm:block" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
                 <path d="M2 7h10M7 2l5 5-5 5" />
               </svg>
             </Link>

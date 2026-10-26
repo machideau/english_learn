@@ -215,33 +215,30 @@ export function SRSFlashcardModal({
               <button onClick={onClose} className="btn-ghost text-xs block mx-auto">Fermer</button>
             </div>
           ) : isFinished ? (
-            <div className="text-center py-6 space-y-5 animate-slide-up">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600">
-                <SparklesIcon size={32} />
+            <div className="text-center py-6 space-y-4 animate-slide-up">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600">
+                <SparklesIcon size={28} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-brown-600">Session terminée !</h3>
-                <p className="text-sm text-brown-300 mt-1">{reviewed} carte{reviewed > 1 ? "s" : ""} révisée{reviewed > 1 ? "s" : ""}</p>
+                <h3 className="text-base font-bold text-brown-700">Session terminée</h3>
+                <p className="text-xs text-brown-400 mt-1">{reviewed} carte{reviewed > 1 ? "s" : ""} révisée{reviewed > 1 ? "s" : ""}</p>
               </div>
-              <p className="text-xs text-brown-300 bg-cream-100 border border-cream-200 rounded-lg px-4 py-2.5">
-                Les cartes difficiles reviendront bientôt. Les faciles, dans plusieurs jours.
-              </p>
-              <div className="flex gap-2 justify-center">
-                <button onClick={onClose} className="btn-primary text-xs py-2 px-4">Fermer</button>
+              <div className="flex justify-center pt-2">
+                <button onClick={onClose} className="btn-primary text-xs py-2 px-5">Fermer</button>
               </div>
             </div>
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-4">
               {/* Carte */}
               <div
                 onClick={handleFlip}
                 role="button"
                 tabIndex={0}
                 aria-label="Cliquer pour retourner la carte"
-                className={`relative min-h-[200px] rounded-xl border-2 cursor-pointer transition-all duration-300 p-6 flex flex-col justify-between select-none
+                className={`relative min-h-[180px] rounded-xl border-2 cursor-pointer transition-all duration-300 p-5 flex flex-col justify-between select-none
                   ${isFlipped
-                    ? "bg-white border-emerald-300 shadow-md ring-2 ring-emerald-50"
-                    : "bg-cream-100/70 hover:bg-cream-100 border-dashed border-brown-200 hover:border-brown-300 shadow-sm"
+                    ? "bg-white border-emerald-300 shadow-sm ring-2 ring-emerald-50"
+                    : "bg-cream-100/70 hover:bg-cream-100 border-dashed border-brown-200 hover:border-brown-300 shadow-xs"
                   }`}
               >
                 <div className="flex items-center justify-between">
@@ -251,43 +248,36 @@ export function SRSFlashcardModal({
                       {config.label}
                     </span>
                   )}
-                  <span className="text-[10px] text-brown-200">
+                  <span className="text-[10px] text-brown-300">
                     {currentCard && formatDue(currentCard.dueDate)}
                   </span>
                 </div>
 
-                <div className="py-4 text-center my-auto">
+                <div className="py-3 text-center my-auto">
                   {!isFlipped ? (
                     <div>
-                      <p className="text-xs text-brown-300 uppercase tracking-widest mb-2">Votre formulation :</p>
-                      <p className="text-lg font-serif text-brown-600 italic bg-terracotta-50/60 inline-block px-3 py-1.5 rounded-md border border-terracotta-100">
+                      <p className="text-[11px] text-brown-400 font-medium mb-1.5">Votre formulation</p>
+                      <p className="text-base font-serif text-brown-700 italic bg-terracotta-50/60 inline-block px-3 py-1.5 rounded-md border border-terracotta-100">
                         "{currentCard?.correction.original}"
                       </p>
-                      <p className="text-xs text-brown-300 mt-4">Espace ou clic pour voir la correction</p>
                     </div>
                   ) : (
-                    <div className="animate-fade-in space-y-3">
-                      <p className="text-xs text-emerald-700 font-semibold uppercase tracking-widest">Formulation correcte :</p>
-                      <div className="flex items-center justify-center gap-3">
-                        <p className="text-xl font-semibold text-brown-700">{currentCard?.correction.corrected}</p>
+                    <div className="animate-fade-in space-y-2.5">
+                      <p className="text-[11px] text-emerald-700 font-semibold">Correction</p>
+                      <div className="flex items-center justify-center gap-2">
+                        <p className="text-lg font-semibold text-brown-800">{currentCard?.correction.corrected}</p>
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); if (currentCard) speakEnglish(currentCard.correction.corrected); }}
-                          className="p-2 rounded-full border bg-cream-100 text-brown-500 hover:bg-cream-200 border-cream-300"
+                          className="p-1.5 rounded-full border bg-cream-100 text-brown-600 hover:bg-cream-200 border-cream-300"
                           aria-label="Écouter"
                         >
                           <VolumeIcon size={14} />
                         </button>
                       </div>
-                      <div className="bg-cream-50 rounded-lg p-3 border border-cream-200 text-left text-xs text-brown-400">
-                        <span className="font-semibold text-brown-500 block mb-1">Explication :</span>
+                      <div className="bg-cream-50 rounded-lg p-2.5 border border-cream-200 text-left text-xs text-brown-600">
                         {currentCard?.correction.explication_fr}
                       </div>
-                      {currentCard && currentCard.reviewCount > 0 && (
-                        <p className="text-[10px] text-brown-200">
-                          Révision #{currentCard.reviewCount} - Intervalle actuel : {currentCard.interval} jour{currentCard.interval > 1 ? "s" : ""}
-                        </p>
-                      )}
                     </div>
                   )}
                 </div>
@@ -295,26 +285,20 @@ export function SRSFlashcardModal({
 
               {/* Boutons de notation */}
               {isFlipped ? (
-                <div className="space-y-2 animate-slide-up">
-                  <p className="text-[11px] text-brown-300 text-center uppercase tracking-widest">
-                    Comment avez-vous trouvé cette carte ?
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {GRADE_LABELS.map(({ grade, label, key, colorClass }) => (
-                      <button
-                        key={grade}
-                        onClick={() => handleGrade(grade)}
-                        className={`py-3 px-3 rounded-lg border text-sm font-semibold transition-all active:scale-[0.97] ${colorClass}`}
-                      >
-                        {label} <span className="opacity-60 text-xs">({key})</span>
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-[10px] text-brown-200 text-center">Raccourcis : [1] Raté · [2] Difficile · [3] Bien · [4] Facile</p>
+                <div className="grid grid-cols-4 gap-2 animate-slide-up">
+                  {GRADE_LABELS.map(({ grade, label, colorClass }) => (
+                    <button
+                      key={grade}
+                      onClick={() => handleGrade(grade)}
+                      className={`py-2 px-1 rounded-lg border text-xs font-semibold transition-all active:scale-[0.97] ${colorClass}`}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
               ) : (
                 <button onClick={handleFlip} className="btn-primary w-full py-2.5 text-xs">
-                  Voir la correction (Espace)
+                  Voir la réponse
                 </button>
               )}
             </div>

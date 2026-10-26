@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Badge, loadBadges } from "@/lib/badges";
 import {
   XIcon,
@@ -10,31 +11,33 @@ import {
   BookIcon,
   MaskIcon,
   HeadphonesIcon,
+  CheckIcon,
 } from "@/components/ui/Icons";
 import { playAchievementFanfare } from "@/lib/sound-effects";
 
 function renderBadgeIcon(iconKey: string) {
   switch (iconKey) {
     case "sparkles":
-      return <SparklesIcon size={20} className="text-terracotta-500" />;
+      return <SparklesIcon size={22} className="text-terracotta-500" />;
     case "flame":
     case "streak":
-      return <FlameIcon size={20} className="text-orange-500" />;
+      return <FlameIcon size={22} className="text-orange-500" />;
     case "message":
-      return <MessageIcon size={20} className="text-blue-500" />;
+      return <MessageIcon size={22} className="text-blue-500" />;
     case "book":
-      return <BookIcon size={20} className="text-amber-600" />;
+      return <BookIcon size={22} className="text-amber-600" />;
     case "mask":
-      return <MaskIcon size={20} className="text-purple-500" />;
+      return <MaskIcon size={22} className="text-purple-500" />;
     case "headphones":
-      return <HeadphonesIcon size={20} className="text-emerald-500" />;
+      return <HeadphonesIcon size={22} className="text-emerald-500" />;
     case "trophy":
     default:
-      return <TrophyIcon size={20} className="text-terracotta-600" />;
+      return <TrophyIcon size={22} className="text-terracotta-600" />;
   }
 }
 
 interface BadgesModalProps {
+  isOpen?: boolean;
   onClose: () => void;
   stats: {
     totalSessions: number;
@@ -47,50 +50,68 @@ interface BadgesModalProps {
   };
 }
 
-export function BadgesModal({ onClose, stats }: BadgesModalProps) {
+export function BadgesModal({ isOpen = true, onClose, stats }: BadgesModalProps) {
+  const [mounted, setMounted] = useState(false);
   const [badges, setBadges] = useState<Badge[]>([]);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
     const loaded = loadBadges(stats);
     setBadges(loaded);
-    // Si des badges sont débloqués, jouer la fanfare
     if (loaded.some((b) => b.unlocked)) {
       playAchievementFanfare();
     }
-  }, [stats]);
+  }, [isOpen, stats]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !mounted) return null;
 
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="badges-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brown-950/50 backdrop-blur-sm animate-fade-in"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-brown-900/60 backdrop-blur-sm animate-fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
-        className="w-full max-w-lg bg-cream-50 rounded-2xl border border-cream-200/90 shadow-2xl p-6 flex flex-col gap-4 text-brown-800 animate-scale-up max-h-[90vh] overflow-hidden"
+        className="w-full max-w-lg bg-cream-50 rounded-2xl border border-cream-300 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* En-tête */}
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-cream-200 bg-cream-100 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-terracotta-100 border border-terracotta-200 flex items-center justify-center text-terracotta-600">
-              <TrophyIcon size={22} />
+            <div className="w-9 h-9 rounded-full bg-terracotta-50 border border-terracotta-200 text-terracotta-600 flex items-center justify-center shadow-xs">
+              <TrophyIcon size={20} />
             </div>
             <div>
-              <h2 id="badges-modal-title" className="text-lg font-extrabold text-brown-800">
+              <h2 id="badges-modal-title" className="text-base font-bold text-brown-800">
                 Trophées & Badges
               </h2>
               <p className="text-xs text-brown-400">
-                {unlockedCount} sur {badges.length} succès débloqués
+                {unlockedCount}/{badges.length} débloqués
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-brown-400 hover:text-brown-700 hover:bg-cream-200/60 transition-colors"
+            className="p-1.5 text-brown-400 hover:text-brown-700 hover:bg-cream-200 rounded-full transition-colors"
             aria-label="Fermer"
           >
             <XIcon size={18} />
@@ -98,15 +119,23 @@ export function BadgesModal({ onClose, stats }: BadgesModalProps) {
         </div>
 
         {/* Barre de progression globale */}
-        <div className="w-full bg-cream-200/80 rounded-full h-2.5 overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-terracotta-500 to-terracotta-600 h-full rounded-full transition-all duration-500"
-            style={{ width: `${(unlockedCount / Math.max(1, badges.length)) * 100}%` }}
-          />
+        <div className="px-5 pt-3 shrink-0">
+          <div className="flex items-center justify-between text-[11px] font-semibold text-brown-500 mb-1.5">
+            <span>Progression globale</span>
+            <span className="text-terracotta-600 font-bold">
+              {Math.round((unlockedCount / Math.max(1, badges.length)) * 100)}%
+            </span>
+          </div>
+          <div className="w-full bg-cream-200/90 rounded-full h-2 overflow-hidden">
+            <div
+              className="bg-gradient-to-r from-terracotta-500 to-terracotta-600 h-full rounded-full transition-all duration-500"
+              style={{ width: `${(unlockedCount / Math.max(1, badges.length)) * 100}%` }}
+            />
+          </div>
         </div>
 
-        {/* Liste des badges */}
-        <div className="overflow-y-auto space-y-2.5 pr-1 max-h-[380px]">
+        {/* Liste des badges avec défilement */}
+        <div className="p-5 overflow-y-auto space-y-3 flex-1 min-h-0">
           {badges.map((badge) => {
             const pct = Math.round((badge.currentValue / badge.targetValue) * 100);
             return (
@@ -115,16 +144,17 @@ export function BadgesModal({ onClose, stats }: BadgesModalProps) {
                 className={[
                   "p-3.5 rounded-xl border transition-all flex items-center gap-3.5",
                   badge.unlocked
-                    ? "bg-white border-cream-200/90 shadow-xs"
-                    : "bg-cream-100/50 border-cream-200/50 opacity-70",
+                    ? "bg-white border-cream-200 shadow-xs"
+                    : "bg-cream-100/60 border-cream-200/60 opacity-75",
                 ].join(" ")}
               >
+                {/* Icône du badge */}
                 <div
                   className={[
-                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-xs",
+                    "w-11 h-11 rounded-xl flex items-center justify-center shrink-0 shadow-xs",
                     badge.unlocked
                       ? "bg-terracotta-50 border border-terracotta-200"
-                      : "bg-cream-200/60 opacity-60",
+                      : "bg-cream-200/70 opacity-60",
                   ].join(" ")}
                 >
                   {renderBadgeIcon(badge.icon)}
@@ -136,7 +166,8 @@ export function BadgesModal({ onClose, stats }: BadgesModalProps) {
                       {badge.title}
                     </h3>
                     {badge.unlocked ? (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 shrink-0 inline-flex items-center gap-1">
+                        <CheckIcon size={11} />
                         Débloqué
                       </span>
                     ) : (
@@ -145,7 +176,7 @@ export function BadgesModal({ onClose, stats }: BadgesModalProps) {
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-brown-400 mt-0.5 line-clamp-2">
+                  <p className="text-[11px] text-brown-500 mt-0.5 line-clamp-2">
                     {badge.description}
                   </p>
 
@@ -163,6 +194,7 @@ export function BadgesModal({ onClose, stats }: BadgesModalProps) {
           })}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

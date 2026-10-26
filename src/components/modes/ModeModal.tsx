@@ -30,22 +30,22 @@ const MODE_META: Record<
 > = {
   "repeat-after-me": {
     title: "Répète après moi",
-    description: "L'avatar dit une phrase - répétez-la à voix haute.",
+    description: "Écoutez et répétez à voix haute",
     Icon: RepeatIcon,
   },
   dictation: {
     title: "Dictée",
-    description: "Écoutez et tapez ce que vous entendez.",
+    description: "Écoutez et écrivez",
     Icon: HeadphonesIcon,
   },
   "text-correction": {
     title: "Correction de texte",
-    description: "Collez un texte pour obtenir des corrections détaillées.",
+    description: "Analysez et corrigez vos écrits",
     Icon: FileEditIcon,
   },
   lesson: {
-    title: "Leçons structurées",
-    description: "Exercices guidés sur la grammaire et le vocabulaire.",
+    title: "Leçons",
+    description: "Exercices guidés",
     Icon: GraduationIcon,
   },
 };

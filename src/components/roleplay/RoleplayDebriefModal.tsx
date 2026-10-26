@@ -64,7 +64,7 @@ export function RoleplayDebriefModal({
             {isSuccess ? "Mission Accomplie !" : "Débriefing du Scénario"}
           </h2>
           <p className="text-xs text-white/80 mt-1">
-            {scenario.title} - {scenario.avatarName}
+            {scenario.title}
           </p>
 
           {/* Score Cercle / Pill */}
@@ -127,11 +127,11 @@ export function RoleplayDebriefModal({
 
           {/* Points clés retenus */}
           <div className="bg-cream-100/70 border border-cream-200 p-3.5 rounded-xl text-xs space-y-1.5">
-            <span className="font-bold text-brown-700 block">Conseil du tuteur :</span>
+            <span className="font-bold text-brown-700 block">Conseil :</span>
             <p className="text-brown-500 leading-relaxed text-[11px]">
               {isSuccess
-                ? "Excellente réactivité ! Vous avez su rester dans votre rôle tout en répondant avec clarté et naturel."
-                : "Bon début ! N'hésitez pas à relancer l'interlocuteur et à utiliser les tournures suggérées dans les indices pour valider tous les points."}
+                ? "Excellente réactivité ! Vous avez su rester dans votre rôle avec clarté."
+                : "Bon début ! Relancez l'interlocuteur et utilisez les tournures suggérées."}
             </p>
           </div>
         </div>
@@ -143,7 +143,7 @@ export function RoleplayDebriefModal({
             className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-terracotta-500 to-terracotta-600 hover:from-terracotta-600 hover:to-terracotta-700 text-white text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2"
           >
             <ShareIcon size={16} />
-            <span>Partager ma réussite</span>
+            <span>Partager</span>
           </button>
 
           <button
