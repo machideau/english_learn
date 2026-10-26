@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type { Level, PronunciationScore } from "@/types";
 import { RepeatIcon, MicIcon, CheckIcon, XIcon, VolumeIcon, SpinnerIcon } from "@/components/ui/Icons";
 
@@ -264,6 +264,26 @@ export function RepeatAfterMeMode({ level, topic, voiceId, onClose }: RepeatAfte
   const lastResult = results[results.length - 1];
   const showResult = stepState === "result" && lastResult?.sentence === currentSentence?.text;
 
+  // Raccourcis clavier
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      // Espace → écouter
+      if (e.key === " " && stepState === "listening") {
+        e.preventDefault();
+        playCurrentSentence();
+      }
+      // Entrée → répéter
+      if (e.key === "Enter" && stepState === "listening") {
+        e.preventDefault();
+        startRecording();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [stepState, playCurrentSentence, startRecording]);
+
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Progression */}
@@ -297,7 +317,7 @@ export function RepeatAfterMeMode({ level, topic, voiceId, onClose }: RepeatAfte
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cream-100 hover:bg-cream-200 border border-cream-300 text-brown-500 text-xs font-medium transition-colors disabled:opacity-40"
           >
             <VolumeIcon size={14} />
-            Réécouter
+            Réécouter <span className="opacity-50">[Espace]</span>
           </button>
         </div>
       )}
@@ -335,7 +355,7 @@ export function RepeatAfterMeMode({ level, topic, voiceId, onClose }: RepeatAfte
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white font-semibold text-sm shadow-sm transition-all active:scale-95"
           >
             <MicIcon size={18} />
-            Je répète
+            Je répète <span className="opacity-70 text-xs ml-1">[Entrée]</span>
           </button>
         )}
 

@@ -1,6 +1,6 @@
 "use client";
 import { type MicState } from "@/types";
-import { MicIcon, StopIcon, SpeakerIcon } from "./Icons";
+import { MicIcon, StopIcon } from "./Icons";
 
 interface MicButtonProps {
   state: MicState;
@@ -41,22 +41,40 @@ const STATE_CONFIG: Record<MicState, StateConfig> = {
   },
 };
 
-const DELAYS = ["0s", "0.12s", "0.24s", "0.12s"];
-const HEIGHTS = [10, 16, 12, 8];
+const RECORDING_DELAYS = ["0s", "0.12s", "0.24s", "0.12s"];
+const RECORDING_HEIGHTS = [10, 16, 12, 8];
 
 function WaveBars() {
   return (
     <div className="flex items-center gap-[3px]" style={{ height: 20 }}>
-      {DELAYS.map((delay, i) => (
+      {RECORDING_DELAYS.map((delay, i) => (
         <span
           key={i}
           className="wave-bar"
-          style={{ height: HEIGHTS[i], animationDelay: delay }}
+          style={{ height: RECORDING_HEIGHTS[i], animationDelay: delay }}
         />
       ))}
     </div>
   );
 }
+
+const SPEAKING_DELAYS = ["0s", "0.15s", "0.3s", "0.15s", "0s"];
+const SPEAKING_HEIGHTS = [8, 14, 18, 14, 8];
+
+function SpeakingBars() {
+  return (
+    <div className="flex items-center gap-[2px]" style={{ height: 20 }}>
+      {SPEAKING_DELAYS.map((delay, i) => (
+        <span
+          key={i}
+          className="wave-bar text-white"
+          style={{ height: SPEAKING_HEIGHTS[i], animationDelay: delay, background: "currentColor" }}
+        />
+      ))}
+    </div>
+  );
+}
+
 
 function Spinner() {
   return (
@@ -83,7 +101,7 @@ export function MicButton({
   function renderIcon() {
     if (state === "recording") return <WaveBars />;
     if (state === "processing") return <Spinner />;
-    if (state === "speaking") return <SpeakerIcon size={22} />;
+    if (state === "speaking") return <SpeakingBars />;
     return <MicIcon size={22} />;
   }
 
@@ -106,6 +124,7 @@ export function MicButton({
           disabled={disabled || (state !== "idle" && state !== "recording")}
           aria-label={config.ariaLabel}
           aria-pressed={state === "recording"}
+          aria-busy={state === "processing"}
           style={{ userSelect: "none", WebkitUserSelect: "none" }}
         >
           {renderIcon()}

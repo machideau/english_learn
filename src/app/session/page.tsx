@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import type { ConversationSession, Correction, CorrectionType } from "@/types";
 import {
@@ -24,6 +24,43 @@ import { useSRS } from "@/hooks/useSRS";
 import { useStreak } from "@/hooks/useStreak";
 
 const STORAGE_KEY = "english_tutor_sessions";
+const PAGE_SIZE = 10;
+
+type SessionFilter = "all" | "with-corrections" | "roleplay";
+
+// ── Modal de confirmation ────────────────────────────────────────────────────
+function ConfirmModal({
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brown-900/50 backdrop-blur-sm animate-fade-in"
+    >
+      <div className="w-full max-w-sm bg-cream-50 rounded-2xl border border-cream-200 shadow-2xl p-6 flex flex-col gap-4">
+        <p className="text-sm font-medium text-brown-700">{message}</p>
+        <div className="flex gap-2 justify-end">
+          <button onClick={onCancel} className="btn-secondary text-xs py-2 px-4">
+            Annuler
+          </button>
+          <button
+            onClick={onConfirm}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-semibold bg-red-500 hover:bg-red-600 text-white border border-red-600 transition-all active:scale-95"
+          >
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function loadSessions(): ConversationSession[] {
   if (typeof window === "undefined") return [];
@@ -362,10 +399,28 @@ export default function SessionPage() {
   const [reviewTitle, setReviewTitle] = useState("Révision des erreurs");
   const { cards: srsCards, dueCards, reviewCard } = useSRS();
   const { streak } = useStreak();
+  const [filter, setFilter] = useState<SessionFilter>("all");
+  const [page, setPage] = useState(1);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null); // session id à supprimer
+  const [confirmClearAll, setConfirmClearAll] = useState(false);
 
   useEffect(() => {
     setSessions(loadSessions().reverse());
   }, []);
+
+  const filteredSessions = useMemo(() => {
+    switch (filter) {
+      case "with-corrections":
+        return sessions.filter((s) => s.allCorrections.length > 0);
+      case "roleplay":
+        return sessions.filter((s) => s.topic && s.topic.length > 0);
+      default:
+        return sessions;
+    }
+  }, [sessions, filter]);
+
+  const totalPages = Math.ceil(filteredSessions.length / PAGE_SIZE);
+  const pagedSessions = filteredSessions.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const allCorrections = useMemo(() => {
     return sessions.flatMap((s) => s.allCorrections);
@@ -386,7 +441,7 @@ export default function SessionPage() {
     setIsReviewOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     setSessions((prev) => {
       const updated = prev.filter((s) => s.id !== id);
       try {
@@ -394,16 +449,34 @@ export default function SessionPage() {
       } catch {}
       return updated;
     });
-  };
+    setConfirmDelete(null);
+  }, []);
 
-  const handleClearAll = () => {
-    if (!confirm("Supprimer toutes les sessions ?")) return;
+  const handleClearAll = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     setSessions([]);
-  };
+    setConfirmClearAll(false);
+  }, []);
 
   return (
     <div className="min-h-dvh bg-cream-100">
+      {/* Modal de confirmation de suppression unique */}
+      {confirmDelete && (
+        <ConfirmModal
+          message="Supprimer cette session ? Cette action est irréversible."
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {/* Modal de confirmation de suppression globale */}
+      {confirmClearAll && (
+        <ConfirmModal
+          message="Supprimer toutes les sessions ? Vos flashcards SRS ne seront pas affectées."
+          onConfirm={handleClearAll}
+          onCancel={() => setConfirmClearAll(false)}
+        />
+      )}
+
       {/* Header */}
       <header className="glass-header sticky top-0 z-10 px-4 sm:px-6 py-3 shadow-subtle">
         <div className="max-w-xl mx-auto flex items-center justify-between">
@@ -423,7 +496,10 @@ export default function SessionPage() {
           {sessions.length > 0 && (
             <div className="flex items-center gap-2">
               <ExportButton sessions={[...sessions].reverse()} label="Tout exporter" />
-              <button onClick={handleClearAll} className="btn-ghost text-xs">
+              <button
+                onClick={() => setConfirmClearAll(true)}
+                className="btn-ghost text-xs text-red-500 hover:text-red-600 hover:bg-red-50"
+              >
                 Tout effacer
               </button>
             </div>
@@ -506,18 +582,70 @@ export default function SessionPage() {
               </div>
             )}
 
-            <p className="text-xs text-brown-200 tracking-wide pt-1">
-              {sessions.length} session{sessions.length > 1 ? "s" : ""}
-            </p>
+            {/* Filtres rapides */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {(
+                [
+                  { value: "all", label: "Toutes" },
+                  { value: "with-corrections", label: "Avec erreurs" },
+                  { value: "roleplay", label: "Avec sujet" },
+                ] as const
+              ).map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => { setFilter(value); setPage(1); }}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
+                    filter === value
+                      ? "bg-terracotta-500 text-white border-terracotta-600"
+                      : "bg-cream-50 text-brown-500 border-cream-300 hover:bg-cream-100"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              <span className="text-xs text-brown-300 ml-auto">
+                {filteredSessions.length} session{filteredSessions.length > 1 ? "s" : ""}
+              </span>
+            </div>
 
-            {sessions.map((session) => (
-              <SessionCard
-                key={session.id}
-                session={session}
-                onDelete={handleDelete}
-                onReview={handleOpenReview}
-              />
-            ))}
+            {/* Liste paginée */}
+            {pagedSessions.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-sm text-brown-300">Aucune session ne correspond à ce filtre.</p>
+              </div>
+            ) : (
+              pagedSessions.map((session) => (
+                <SessionCard
+                  key={session.id}
+                  session={session}
+                  onDelete={(id) => setConfirmDelete(id)}
+                  onReview={handleOpenReview}
+                />
+              ))
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 pt-2">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-3 py-1.5 rounded text-xs font-medium border border-cream-300 bg-cream-50 text-brown-500 hover:bg-cream-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  ← Précédent
+                </button>
+                <span className="text-xs text-brown-400 font-medium">
+                  {page} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="px-3 py-1.5 rounded text-xs font-medium border border-cream-300 bg-cream-50 text-brown-500 hover:bg-cream-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  Suivant →
+                </button>
+              </div>
+            )}
           </div>
         )}
       </main>

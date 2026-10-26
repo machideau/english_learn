@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { NavBar } from "@/components/ui/NavBar";
 import { Logo } from "@/components/ui/Logo";
+
 
 export const metadata: Metadata = {
   title: "English Tutor AI - Pratiquez l'anglais à l'oral avec un avatar 3D",
@@ -337,35 +339,8 @@ const FAQ = [
 ];
 
 // ─── Composants ───────────────────────────────────────────────────────────────
+// NavBar est un Client Component importé depuis @/components/ui/NavBar
 
-function NavBar() {
-  return (
-    <header className="sticky top-0 z-50 bg-cream-50/90 backdrop-blur-md border-b border-cream-200/80">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <Logo size={34} />
-          <span className="font-bold text-brown-700 tracking-tight text-sm">English Tutor AI</span>
-        </div>
-
-        <nav className="hidden sm:flex items-center gap-6 text-sm text-brown-400 font-medium">
-          <a href="#features" className="hover:text-brown-600 transition-colors">Fonctionnalités</a>
-          <a href="#how-it-works" className="hover:text-brown-600 transition-colors">Comment ça marche</a>
-          <a href="#faq" className="hover:text-brown-600 transition-colors">FAQ</a>
-        </nav>
-
-        <Link
-          href="/app"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white text-sm font-semibold transition-all shadow-sm active:scale-95"
-        >
-          Commencer gratuitement
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-            <path d="M2 7h10M7 2l5 5-5 5" />
-          </svg>
-        </Link>
-      </div>
-    </header>
-  );
-}
 
 function Hero() {
   return (
@@ -432,7 +407,7 @@ function Hero() {
           ))}
         </div>
 
-        {/* Aperçu UI stylisé */}
+        {/* ── Aperçu UI animé ── */}
         <div className="mt-14 max-w-4xl mx-auto">
           <div className="relative rounded-2xl border border-cream-300 shadow-lift bg-cream-50 overflow-hidden">
             {/* Fausse barre de navigation */}
@@ -445,7 +420,7 @@ function Hero() {
               <div className="flex-1 mx-4 bg-cream-200 rounded-full h-5 max-w-xs" />
             </div>
 
-            {/* Contenu mock de l'app */}
+            {/* Contenu mock animé */}
             <div className="flex divide-x divide-cream-200 min-h-[280px]">
               {/* Colonne gauche - avatar */}
               <div className="w-3/5 bg-gradient-to-b from-cream-100 to-cream-200/80 flex flex-col items-center justify-center gap-4 py-10 px-6">
@@ -458,9 +433,9 @@ function Hero() {
                 <div className="bg-white/80 rounded-full px-4 py-1.5 border border-cream-200 text-xs text-brown-500 font-medium">
                   Sarah · Thalia · Intermédiaire
                 </div>
-                {/* Faux mic button */}
-                <div className="w-12 h-12 rounded-full bg-terracotta-500 shadow-mic flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                {/* Bouton mic animé */}
+                <div className="hero-mic w-12 h-12 rounded-full bg-terracotta-500 shadow-mic flex items-center justify-center" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
                     <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
                     <line x1="12" x2="12" y1="19" y2="22" />
@@ -468,26 +443,33 @@ function Hero() {
                 </div>
               </div>
 
-              {/* Colonne droite - conversation */}
-              <div className="flex-1 flex flex-col gap-3 p-4 justify-center">
-                {/* Message utilisateur */}
-                <div className="flex justify-end">
+              {/* Colonne droite - conversation animée */}
+              <div className="flex-1 flex flex-col gap-3 p-4 justify-center relative overflow-hidden">
+                {/* Message 1 : utilisateur */}
+                <div className="hero-msg-1 flex justify-end">
                   <div className="bg-terracotta-500 text-white text-xs rounded-2xl rounded-br-sm px-3 py-2 max-w-[85%] shadow-sm">
-                    Yesterday I go to the museum, it was amazing!
+                    Yesterday I go to the museum!
                   </div>
                 </div>
-                {/* Correction */}
-                <div className="bg-cream-100 border border-cream-200 rounded-lg px-2.5 py-2 text-[10px]">
+                {/* Message 2 : correction */}
+                <div className="hero-msg-2 bg-cream-100 border border-cream-200 rounded-lg px-2.5 py-2 text-[10px]">
                   <span className="text-blue-600 font-semibold">Grammaire ·</span>
                   <span className="text-brown-400 ml-1 line-through">go</span>
                   <span className="text-brown-600 font-medium ml-1">went</span>
                   <p className="text-brown-300 mt-0.5">Passé simple irrégulier de "go"</p>
                 </div>
-                {/* Message avatar */}
-                <div className="flex items-end gap-2">
+                {/* Message 3 : réponse AI */}
+                <div className="hero-msg-3 flex items-end gap-2">
                   <div className="w-5 h-5 rounded-full bg-terracotta-400 text-white text-[8px] font-bold flex items-center justify-center shrink-0">AI</div>
                   <div className="bg-white border border-cream-200 text-brown-600 text-xs rounded-2xl rounded-bl-sm px-3 py-2 max-w-[85%] shadow-subtle leading-relaxed">
                     That sounds wonderful! Which part did you enjoy the most?
+                  </div>
+                </div>
+                {/* Message 4 : flashcard générée */}
+                <div className="hero-msg-4 flex justify-end">
+                  <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] rounded-xl px-3 py-2 flex items-center gap-1.5">
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><polyline points="2,6 4.5,8.5 10,3" /></svg>
+                    Flashcard ajoutée : <strong className="ml-0.5">went</strong>
                   </div>
                 </div>
               </div>
@@ -499,11 +481,33 @@ function Hero() {
   );
 }
 
+function StatsBar() {
+  const STATS = [
+    { value: "8", label: "Modes d'entraînement" },
+    { value: "12", label: "Voix naturelles" },
+    { value: "A1→C1", label: "Niveaux CEFR" },
+    { value: "< 2s", label: "Latence IA" },
+  ];
+  return (
+    <div className="bg-white/70 border-y border-cream-200 py-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+        {STATS.map(({ value, label }) => (
+          <div key={label}>
+            <div className="text-2xl sm:text-3xl font-extrabold text-terracotta-500 tracking-tight">{value}</div>
+            <div className="mt-1 text-xs text-brown-400 font-medium">{label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Features() {
   return (
     <section id="features" className="py-20 sm:py-24 bg-white/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
+          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">Fonctionnalités</p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
             Tout ce qu'il faut pour progresser vraiment
           </h2>
@@ -512,8 +516,29 @@ function Features() {
           </p>
         </div>
 
+        {/* Hero feature card */}
+        <div className="mb-6">
+          <article className="bg-gradient-to-br from-terracotta-50 to-cream-100 border-2 border-terracotta-200 rounded-2xl p-7 flex flex-col sm:flex-row items-start sm:items-center gap-5 hover:border-terracotta-300 hover:shadow-lift transition-all group">
+            <div className="w-14 h-14 rounded-xl bg-terracotta-500 text-white flex items-center justify-center shrink-0 shadow-mic group-hover:scale-105 transition-transform">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+              </svg>
+            </div>
+            <div>
+              <span className="inline-block mb-1.5 text-[11px] font-bold uppercase tracking-widest text-terracotta-500 px-2 py-0.5 rounded-full bg-terracotta-100">Fonctionnalité principale</span>
+              <h3 className="text-xl font-extrabold text-brown-700 mb-1.5">Conversation naturelle avec corrections</h3>
+              <p className="text-brown-400 leading-relaxed">
+                Parlez avec un tuteur IA qui s'adapte à votre niveau et corrige vos erreurs <strong className="text-brown-600">sans couper le fil</strong> de la conversation. Grammaire, vocabulaire, prononciation — tout est analysé en temps réel.
+              </p>
+            </div>
+          </article>
+        </div>
+
+        {/* Grille des autres features */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((f) => (
+          {FEATURES.slice(1).map((f) => (
             <article
               key={f.title}
               className="bg-cream-50 border border-cream-200 rounded-2xl p-6 hover:border-terracotta-200 hover:shadow-card transition-all group"
@@ -536,6 +561,7 @@ function HowItWorks() {
     <section id="how-it-works" className="py-20 sm:py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
+          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">En pratique</p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
             En pratique, c'est simple
           </h2>
@@ -606,6 +632,7 @@ function Levels() {
     <section className="py-20 sm:py-24 bg-white/60">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-14">
+          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">Niveaux</p>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
             Adapté à votre niveau
           </h2>
@@ -645,21 +672,37 @@ function Faq() {
     <section id="faq" className="py-20 sm:py-24">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
+          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">FAQ</p>
           <h2 className="text-3xl font-extrabold text-brown-700 tracking-tight">
             Questions fréquentes
           </h2>
         </div>
-        <dl className="space-y-4">
+        <div className="space-y-3" role="list">
           {FAQ.map((item) => (
-            <div key={item.q} className="bg-cream-50 border border-cream-200 rounded-xl p-5">
-              <dt className="font-bold text-brown-700 mb-2 flex items-start gap-2">
-                <span className="text-terracotta-500 shrink-0 mt-0.5">Q.</span>
-                {item.q}
-              </dt>
-              <dd className="text-sm text-brown-400 leading-relaxed pl-5">{item.a}</dd>
-            </div>
+            <details
+              key={item.q}
+              className="group bg-cream-50 border border-cream-200 rounded-xl hover:border-terracotta-200 transition-colors"
+            >
+              <summary className="flex items-center justify-between gap-3 px-5 py-4 font-bold text-brown-700 cursor-pointer list-none select-none hover:text-brown-900">
+                <span className="flex items-start gap-2">
+                  <span className="text-terracotta-500 shrink-0 mt-0.5 font-extrabold">Q.</span>
+                  {item.q}
+                </span>
+                <svg
+                  className="faq-chevron shrink-0 text-brown-400"
+                  width="16" height="16" viewBox="0 0 16 16"
+                  fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                  aria-hidden
+                >
+                  <path d="M3 6l5 5 5-5" />
+                </svg>
+              </summary>
+              <div className="px-5 pb-5 pt-1">
+                <p className="text-sm text-brown-400 leading-relaxed pl-5">{item.a}</p>
+              </div>
+            </details>
           ))}
-        </dl>
+        </div>
       </div>
     </section>
   );
@@ -734,6 +777,7 @@ export default function LandingPage() {
       <NavBar />
       <main>
         <Hero />
+        <StatsBar />
         <Features />
         <HowItWorks />
         <Levels />

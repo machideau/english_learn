@@ -43,6 +43,7 @@ import { RoleplayDebriefModal } from "@/components/roleplay/RoleplayDebriefModal
 import { PlacementTestModal } from "@/components/placement/PlacementTestModal";
 import { RoadmapModal } from "@/components/roadmap/RoadmapModal";
 import { ShareableScoreCard } from "@/components/social/ShareableScoreCard";
+import { OnboardingOverlay } from "@/components/onboarding/OnboardingOverlay";
 import { useHandsFree } from "@/hooks/useHandsFree";
 import { analyzeSpokenWords } from "@/lib/phonetic-analyzer";
 import { saveCompletedStep } from "@/lib/learning-roadmap";
@@ -155,6 +156,12 @@ export default function HomePage() {
   const [isShareCardOpen, setIsShareCardOpen] = useState(false);
   const [shareCardData, setShareCardData] = useState<ShareCardData | null>(null);
 
+  // ── Menu header drawer (actions secondaires) ──────────────────────────────
+  const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
+
+  // ── Menu modes dans le dock ───────────────────────────────────────────────
+  const [isModesMenuOpen, setIsModesMenuOpen] = useState(false);
+
   useEffect(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     setTranscriptionMode(SR ? "webspeech" : "openrouter");
@@ -181,6 +188,7 @@ export default function HomePage() {
       setMicButtonState("processing");
       setIsTyping(true);
       avatarRef.current?.setEmotion("thinking");
+      setAvatarSubtitle("Je réfléchis…");
       // Enregistrer l'activité pour le streak
       recordActivity();
 
@@ -222,6 +230,7 @@ export default function HomePage() {
 
         const chatData: ChatApiResponse = await chatRes.json();
         setIsTyping(false);
+        setAvatarSubtitle(""); // Effacer "Je réfléchis…"
         if (chatData.niveau_estime !== level) setLevel(chatData.niveau_estime);
 
         // Ajouter les nouvelles corrections au SRS
@@ -526,8 +535,13 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col h-dvh max-h-dvh overflow-hidden bg-cream-100">
+      {/* ── Onboarding premier lancement ── */}
+      <OnboardingOverlay />
+
       {/* ── Bannière d'installation PWA Mobile ── */}
       <PwaInstallBanner />
+
+      {/* ── Header Glassmorphism ── */}
 
       {/* ── Header Glassmorphism ── */}
       <header className="glass-header sticky top-0 z-20 px-3 sm:px-6 py-2.5 shrink-0 flex items-center justify-between no-print shadow-subtle">
@@ -554,63 +568,8 @@ export default function HomePage() {
           <TopicSelector value={topic} onChange={setTopic} compact disabled={sessionActive} />
         </div>
 
-        {/* Navigation & actions stratégiques */}
+        {/* Navigation compacte */}
         <nav className="flex items-center gap-1.5 sm:gap-2">
-          {/* Mises en situation / Roleplay */}
-          <button
-            onClick={() => setIsRoleplaySelectorOpen(true)}
-            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-terracotta-700 bg-terracotta-50 hover:bg-terracotta-100 border border-terracotta-200 transition-colors shadow-subtle shrink-0"
-            title="Mises en situation & Scénarios immersifs"
-          >
-            <MaskIcon size={14} />
-            <span className="hidden sm:inline">Scénarios</span>
-          </button>
-
-          {/* Test de positionnement CEFR */}
-          <button
-            onClick={() => setIsPlacementTestOpen(true)}
-            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-brown-600 bg-cream-50 hover:bg-cream-200 border border-cream-300 transition-colors shadow-subtle shrink-0"
-            title="Passer le test de niveau officiel (A1-C1)"
-          >
-            <TrophyIcon size={14} />
-            <span className="hidden sm:inline">Test Niveau</span>
-          </button>
-
-          {/* Parcours / Roadmap */}
-          <button
-            onClick={() => setIsRoadmapOpen(true)}
-            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-brown-600 bg-cream-50 hover:bg-cream-200 border border-cream-300 transition-colors shadow-subtle shrink-0"
-            title="Parcours guidé A1-C1"
-          >
-            <CompassIcon size={14} />
-            <span className="hidden md:inline">Parcours</span>
-          </button>
-
-          {/* Bilans de séance */}
-          <Link
-            href="/session"
-            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-brown-600 bg-cream-50 hover:bg-cream-200 border border-cream-300 transition-colors shadow-subtle shrink-0"
-            aria-label="Bilans de séance et flashcards"
-          >
-            <CalendarIcon size={14} />
-            <span className="hidden lg:inline">Bilans</span>
-            {sessions.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-cream-300 text-[10px] font-bold text-brown-600">
-                {sessions.length}
-              </span>
-            )}
-          </Link>
-
-          {/* Partager Bilan (Carte Virale) */}
-          <button
-            onClick={() => openShareCard()}
-            className="p-1.5 rounded-full text-brown-500 hover:text-terracotta-600 hover:bg-cream-200 transition-colors shrink-0"
-            title="Partager ma carte de progression"
-            aria-label="Partager mon bilan"
-          >
-            <ShareIcon size={15} />
-          </button>
-
           {/* Streak compact */}
           <StreakBadge streak={streak} compact />
 
@@ -622,6 +581,87 @@ export default function HomePage() {
               Terminer
             </button>
           )}
+
+          {/* Bilans */}
+          <Link
+            href="/session"
+            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-brown-600 bg-cream-50 hover:bg-cream-200 border border-cream-300 transition-colors shadow-subtle shrink-0"
+            aria-label="Bilans de séance et flashcards"
+          >
+            <CalendarIcon size={14} />
+            <span className="hidden sm:inline">Bilans</span>
+            {sessions.length > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full bg-cream-300 text-[10px] font-bold text-brown-600">
+                {sessions.length}
+              </span>
+            )}
+          </Link>
+
+          {/* Menu ⋮ — actions secondaires */}
+          <div className="relative">
+            <button
+              onClick={() => setIsHeaderMenuOpen((v) => !v)}
+              className="p-1.5 rounded-full text-brown-500 hover:text-brown-700 hover:bg-cream-200 border border-cream-300 bg-cream-50 transition-colors"
+              aria-label="Plus d'options"
+              aria-expanded={isHeaderMenuOpen}
+              aria-haspopup="menu"
+            >
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <circle cx="10" cy="4" r="1.5" />
+                <circle cx="10" cy="10" r="1.5" />
+                <circle cx="10" cy="16" r="1.5" />
+              </svg>
+            </button>
+
+            {isHeaderMenuOpen && (
+              <>
+                {/* Overlay pour fermer */}
+                <div
+                  className="fixed inset-0 z-30"
+                  onClick={() => setIsHeaderMenuOpen(false)}
+                  aria-hidden="true"
+                />
+                <div
+                  role="menu"
+                  className="absolute right-0 top-full mt-2 z-40 w-52 bg-cream-50 border border-cream-200 rounded-xl shadow-2xl py-1 animate-fade-in"
+                >
+                  <button
+                    role="menuitem"
+                    onClick={() => { setIsRoleplaySelectorOpen(true); setIsHeaderMenuOpen(false); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-brown-600 hover:bg-cream-100 transition-colors"
+                  >
+                    <MaskIcon size={14} />
+                    Scénarios Roleplay
+                  </button>
+                  <button
+                    role="menuitem"
+                    onClick={() => { setIsPlacementTestOpen(true); setIsHeaderMenuOpen(false); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-brown-600 hover:bg-cream-100 transition-colors"
+                  >
+                    <TrophyIcon size={14} />
+                    Test de Niveau (CEFR)
+                  </button>
+                  <button
+                    role="menuitem"
+                    onClick={() => { setIsRoadmapOpen(true); setIsHeaderMenuOpen(false); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-brown-600 hover:bg-cream-100 transition-colors"
+                  >
+                    <CompassIcon size={14} />
+                    Parcours A1-C1
+                  </button>
+                  <hr className="border-cream-200 my-1" />
+                  <button
+                    role="menuitem"
+                    onClick={() => { openShareCard(); setIsHeaderMenuOpen(false); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-brown-600 hover:bg-cream-100 transition-colors"
+                  >
+                    <ShareIcon size={14} />
+                    Partager ma progression
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </nav>
       </header>
 
@@ -634,8 +674,14 @@ export default function HomePage() {
       )}
 
       {/* ── Segmented Control Mobile (< md) ── */}
-      <div className="md:hidden flex items-center bg-cream-200/80 p-1 rounded-xl border border-cream-300 mx-3 mt-1.5 mb-1 shrink-0">
+      <div
+        role="tablist"
+        aria-label="Navigation principale"
+        className="md:hidden flex items-center bg-cream-200/80 p-1 rounded-xl border border-cream-300 mx-3 mt-1.5 mb-1 shrink-0"
+      >
         <button
+          role="tab"
+          aria-selected={mobileTab === "studio"}
           onClick={() => setMobileTab("studio")}
           className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
             mobileTab === "studio"
@@ -648,6 +694,8 @@ export default function HomePage() {
         </button>
 
         <button
+          role="tab"
+          aria-selected={mobileTab === "chat"}
           onClick={() => {
             setMobileTab("chat");
             setRightTab("chat");
@@ -668,6 +716,8 @@ export default function HomePage() {
         </button>
 
         <button
+          role="tab"
+          aria-selected={mobileTab === "corrections"}
           onClick={() => {
             setMobileTab("corrections");
             setRightTab("corrections");
@@ -681,7 +731,9 @@ export default function HomePage() {
           <PencilIcon size={13} />
           <span>Fautes</span>
           {allCorrections.length > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-terracotta-500 text-white text-[10px] font-bold">
+            <span className={`px-1.5 py-0.2 rounded-full text-white text-[10px] font-bold transition-colors ${
+              mobileTab === "corrections" ? "bg-brown-400" : "bg-terracotta-500"
+            }`}>
               {allCorrections.length}
             </span>
           )}
@@ -811,102 +863,132 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* Bouton micro avec halo et bouton Mains Libres */}
-            <div className="flex items-center justify-center gap-3">
-              <MicButton
-                state={micButtonState}
-                onClick={handleMicClick}
-                onMouseDown={handleMicDown}
-                onMouseUp={handleMicUp}
-                onTouchStart={handleMicDown}
-                onTouchEnd={handleMicUp}
-                disabled={micButtonState === "processing" || micButtonState === "speaking"}
-              />
+            {/* ── Ligne principale : Modes | MicButton | Mains Libres ── */}
+            <div className="w-full flex items-center justify-between gap-2 px-1">
+              {/* Bouton "+" modes — ouvre un mini-menu */}
+              <div className="relative">
+                <button
+                  onClick={() => setIsModesMenuOpen((v) => !v)}
+                  className="flex flex-col items-center gap-0.5 p-2 rounded-xl bg-cream-100 hover:bg-cream-200 border border-cream-300 text-brown-400 hover:text-brown-700 transition-colors"
+                  title="Modes d'entraînement"
+                  aria-label="Modes d'entraînement"
+                  aria-expanded={isModesMenuOpen}
+                >
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path d="M10 2a1 1 0 0 1 1 1v6h6a1 1 0 0 1 0 2h-6v6a1 1 0 0 1-2 0v-6H3a1 1 0 0 1 0-2h6V3a1 1 0 0 1 1-1z"/>
+                  </svg>
+                  <span className="text-[9px] font-semibold leading-none">Modes</span>
+                </button>
 
+                {isModesMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-30" onClick={() => setIsModesMenuOpen(false)} aria-hidden="true" />
+                    <div className="absolute left-0 bottom-full mb-2 z-40 w-48 bg-cream-50 border border-cream-200 rounded-xl shadow-2xl py-1 animate-fade-in">
+                      <button
+                        onClick={() => { setIsRoleplaySelectorOpen(true); setIsModesMenuOpen(false); }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-terracotta-700 hover:bg-terracotta-50 transition-colors"
+                      >
+                        <MaskIcon size={13} />
+                        Scénarios Roleplay
+                      </button>
+                      {(
+                        [
+                          { mode: "repeat-after-me" as AppMode, Icon: RepeatIcon, label: "Répète après moi" },
+                          { mode: "dictation" as AppMode, Icon: HeadphonesIcon, label: "Dictée" },
+                          { mode: "text-correction" as AppMode, Icon: FileEditIcon, label: "Corriger texte" },
+                          { mode: "lesson" as AppMode, Icon: GraduationIcon, label: "Leçons" },
+                        ] as const
+                      ).map(({ mode, Icon, label }) => (
+                        <button
+                          key={mode}
+                          onClick={() => { openMode(mode); setIsModesMenuOpen(false); }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-brown-600 hover:bg-cream-100 transition-colors"
+                        >
+                          <Icon size={13} />
+                          {label}
+                        </button>
+                      ))}
+                      {dueCards.length > 0 && (
+                        <>
+                          <hr className="border-cream-200 my-1" />
+                          <button
+                            onClick={() => { setIsSRSOpen(true); setIsModesMenuOpen(false); }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-terracotta-600 hover:bg-terracotta-50 transition-colors"
+                          >
+                            <CardsIcon size={13} />
+                            Flashcards ({dueCards.length} dues)
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* MicButton — zone centrale prominente */}
+              <div className="flex-1 flex justify-center">
+                <MicButton
+                  state={micButtonState}
+                  onClick={handleMicClick}
+                  onMouseDown={handleMicDown}
+                  onMouseUp={handleMicUp}
+                  onTouchStart={handleMicDown}
+                  onTouchEnd={handleMicUp}
+                  disabled={micButtonState === "processing" || micButtonState === "speaking"}
+                />
+              </div>
+
+              {/* Mode Mains Libres */}
               <button
                 onClick={() => setIsHandsFree(!isHandsFree)}
                 className={[
-                  "flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold transition-all duration-200",
+                  "flex flex-col items-center gap-0.5 p-2 rounded-xl text-xs font-semibold transition-all duration-200",
                   isHandsFree
-                    ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-300"
-                    : "bg-white border border-cream-200 text-brown-600 hover:border-terracotta-300 shadow-subtle hover:bg-cream-50",
+                    ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-300 border border-emerald-700"
+                    : "bg-cream-100 border border-cream-300 text-brown-400 hover:border-terracotta-200 hover:text-brown-700 hover:bg-cream-200",
                 ].join(" ")}
-                title="Mode Mains Libres (Walk & Talk) : détection automatique de la parole sans toucher l'écran"
+                title="Mode Mains Libres (Walk & Talk)"
+                aria-label={isHandsFree ? "Désactiver le mode mains libres" : "Activer le mode mains libres"}
+                aria-pressed={isHandsFree}
               >
-                <HeadphonesIcon size={14} />
-                <span>{isHandsFree ? "Mains Libres ON" : "Mains Libres"}</span>
+                <HeadphonesIcon size={16} />
+                <span className="text-[9px] font-semibold leading-none">
+                  {isHandsFree ? "Actif" : "Libre"}
+                </span>
               </button>
             </div>
 
-            {/* Champ de saisie texte moderne */}
+            {/* Séparateur visuel */}
+            <div className="w-full flex items-center gap-2">
+              <div className="flex-1 h-px bg-cream-200" />
+              <span className="text-[10px] text-brown-300 font-medium">ou par écrit</span>
+              <div className="flex-1 h-px bg-cream-200" />
+            </div>
+
+            {/* Champ de saisie texte */}
             <div className="w-full max-w-lg">
               <TextInput
                 onSend={handleUserMessage}
                 disabled={micButtonState !== "idle"}
-                placeholder="Ou écrivez votre message en anglais…"
+                placeholder="Écrivez votre message en anglais…"
               />
             </div>
 
-            {/* Bouton Personnaliser + raccourcis modes */}
-            <div className="w-full flex items-center justify-between gap-2 flex-wrap">
-              <button
-                onClick={() => setShowPersonalize(true)}
-                disabled={micButtonState === "processing" || micButtonState === "speaking"}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brown-500 bg-cream-100/80 border border-cream-300 hover:bg-cream-200 hover:text-brown-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                aria-label="Personnaliser l'avatar et la voix"
-              >
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <span>{selectedAvatar.label}</span>
-                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
-                <span>{selectedVoice.label}</span>
-              </button>
-
-              {/* Raccourcis accès modes */}
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setIsRoleplaySelectorOpen(true)}
-                  title="Mises en situation (Roleplay)"
-                  aria-label="Mises en situation"
-                  className="p-1.5 rounded-lg bg-terracotta-50 hover:bg-terracotta-100 border border-terracotta-200 text-terracotta-600 transition-colors"
-                >
-                  <MaskIcon size={14} />
-                </button>
-                {(
-                  [
-                    { mode: "repeat-after-me" as AppMode, Icon: RepeatIcon, label: "Répète après moi" },
-                    { mode: "dictation" as AppMode, Icon: HeadphonesIcon, label: "Dictée" },
-                    { mode: "text-correction" as AppMode, Icon: FileEditIcon, label: "Corriger texte" },
-                    { mode: "lesson" as AppMode, Icon: GraduationIcon, label: "Leçons" },
-                  ] as const
-                ).map(({ mode, Icon, label }) => (
-                  <button
-                    key={mode}
-                    onClick={() => openMode(mode)}
-                    title={label}
-                    aria-label={label}
-                    className="p-1.5 rounded-lg bg-cream-100 hover:bg-terracotta-50 border border-cream-200 hover:border-terracotta-200 text-brown-400 hover:text-terracotta-500 transition-colors"
-                  >
-                    <Icon size={14} />
-                  </button>
-                ))}
-                {dueCards.length > 0 && (
-                  <button
-                    onClick={() => setIsSRSOpen(true)}
-                    title={`${dueCards.length} carte${dueCards.length > 1 ? "s" : ""} à réviser`}
-                    aria-label="Révision espacée"
-                    className="p-1.5 rounded-lg bg-terracotta-50 hover:bg-terracotta-100 border border-terracotta-200 text-terracotta-500 hover:text-terracotta-600 transition-colors relative"
-                  >
-                    <CardsIcon size={14} />
-                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-terracotta-500 text-white text-[8px] font-bold flex items-center justify-center">
-                      {dueCards.length > 9 ? "9+" : dueCards.length}
-                    </span>
-                  </button>
-                )}
-              </div>
-            </div>
+            {/* Bouton Personnaliser (compact) */}
+            <button
+              onClick={() => setShowPersonalize(true)}
+              disabled={micButtonState === "processing" || micButtonState === "speaking"}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brown-400 bg-cream-100/80 border border-cream-200 hover:bg-cream-200 hover:text-brown-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Personnaliser l'avatar et la voix"
+            >
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <span>{selectedAvatar.label}</span>
+              <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
+              <span>{selectedVoice.label}</span>
+            </button>
           </div>
         </section>
 
@@ -953,7 +1035,11 @@ export default function HomePage() {
               <PencilIcon size={14} />
               <span>Corrections</span>
               {allCorrections.length > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-terracotta-500 text-cream-50 text-[10px] font-bold animate-pulse">
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold transition-all ${
+                  rightTab === "corrections"
+                    ? "bg-brown-200 text-brown-700"
+                    : "bg-terracotta-500 text-cream-50 animate-pulse"
+                }`}>
                   {allCorrections.length}
                 </span>
               )}

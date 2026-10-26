@@ -126,7 +126,7 @@ export function MessageBubble({ message, onReplay }: MessageBubbleProps) {
       {isUser && message.corrections && message.corrections.length > 0 && (
         <div className="w-full max-w-[85%] space-y-2 mt-1">
           {message.corrections.map((c, i) => (
-            <CorrectionCard key={i} correction={c} index={i} />
+            <CorrectionCard key={i} correction={c} index={i} context={message.content} />
           ))}
         </div>
       )}

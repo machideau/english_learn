@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
-import type { RoleplayScenario, RoleplayObjective } from "@/types";
+import { useState, useEffect, useRef } from "react";
+import type { RoleplayScenario } from "@/types";
 import { CheckIcon, MaskIcon, XIcon } from "@/components/ui/Icons";
+
 
 interface RoleplayHeaderProps {
   scenario: RoleplayScenario;
@@ -17,6 +18,27 @@ export function RoleplayHeader({
   onExit,
 }: RoleplayHeaderProps) {
   const [showDetails, setShowDetails] = useState(false);
+  const [toastLabel, setToastLabel] = useState<string | null>(null);
+  const prevCompleted = useRef<string[]>([]);
+
+  // Détection d'un nouvel objectif complété
+  useEffect(() => {
+    const newlyCompleted = completedObjectives.filter(
+      (id) => !prevCompleted.current.includes(id)
+    );
+    if (newlyCompleted.length > 0) {
+      const obj = scenario.objectives.find((o) => o.id === newlyCompleted[0]);
+      if (obj) setToastLabel(obj.label);
+    }
+    prevCompleted.current = completedObjectives;
+  }, [completedObjectives, scenario.objectives]);
+
+  // Efface le toast après l'animation
+  useEffect(() => {
+    if (!toastLabel) return;
+    const t = setTimeout(() => setToastLabel(null), 3300);
+    return () => clearTimeout(t);
+  }, [toastLabel]);
 
   const completedCount = scenario.objectives.filter((o) =>
     completedObjectives.includes(o.id)
@@ -56,10 +78,22 @@ export function RoleplayHeader({
           >
             <span className="w-2 h-2 rounded-full bg-terracotta-500 animate-pulse" />
             <span>Objectifs : {completedCount}/{totalCount}</span>
-            <span className="text-[10px] text-terracotta-600 font-bold">
-              ({progressPercent}%)
-            </span>
           </button>
+
+          {/* Barre de progression visuelle */}
+          <div
+            className="hidden sm:block w-16 h-1.5 rounded-full bg-cream-200 overflow-hidden"
+            title={`${progressPercent}% accompli`}
+            aria-label={`Progression : ${progressPercent}%`}
+          >
+            <div
+              className="h-full rounded-full bg-terracotta-500 transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <span className="hidden sm:inline text-[10px] text-terracotta-600 font-bold tabular-nums">
+            {progressPercent}%
+          </span>
 
           <button
             onClick={onEndScenario}
@@ -78,6 +112,19 @@ export function RoleplayHeader({
           </button>
         </div>
       </div>
+
+      {/* Toast « Objectif atteint » */}
+      {toastLabel && (
+        <div
+          key={toastLabel}
+          className="objective-toast pointer-events-none fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-emerald-500 text-white text-sm font-bold shadow-lift"
+          role="status"
+          aria-live="polite"
+        >
+          <CheckIcon size={16} />
+          <span>🎯 Objectif atteint : {toastLabel}</span>
+        </div>
+      )}
 
       {/* Expanded Objectives Dropdown */}
       {showDetails && (

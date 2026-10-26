@@ -176,7 +176,14 @@ export function SRSFlashcardModal({
 
         {/* Progression */}
         {!isFinished && queue.length > 0 && (
-          <div className="w-full bg-cream-200 h-1.5">
+          <div
+            className="w-full bg-cream-200 h-1.5"
+            role="progressbar"
+            aria-valuenow={progressPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Progression : ${currentIdx + 1} sur ${queue.length} cartes`}
+          >
             <div className="bg-terracotta-500 h-full transition-all duration-300" style={{ width: `${progressPct}%` }} />
           </div>
         )}
@@ -297,9 +304,9 @@ export function SRSFlashcardModal({
                       <button
                         key={grade}
                         onClick={() => handleGrade(grade)}
-                        className={`py-2.5 px-3 rounded-lg border text-xs font-semibold transition-all active:scale-[0.97] ${colorClass}`}
+                        className={`py-3 px-3 rounded-lg border text-sm font-semibold transition-all active:scale-[0.97] ${colorClass}`}
                       >
-                        {label} ({key})
+                        {label} <span className="opacity-60 text-xs">({key})</span>
                       </button>
                     ))}
                   </div>

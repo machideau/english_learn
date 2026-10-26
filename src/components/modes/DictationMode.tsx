@@ -8,7 +8,6 @@ import {
   VolumeIcon,
   SpinnerIcon,
 } from "@/components/ui/Icons";
-
 interface DictationSentence {
   text: string;
   difficulty: "easy" | "medium" | "hard";
@@ -209,6 +208,22 @@ export function DictationMode({ level, topic, voiceId, onClose }: DictationModeP
       });
   }, [level, topic]);
 
+  // Raccourcis clavier globaux
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      // Ne pas interférer si l'utilisateur est dans un input
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      // Espace → écouter
+      if (e.key === " " && !hasPlayed && !isPlaying && !currentResult && currentSentence && !isLoading) {
+        e.preventDefault();
+        playAudio();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [hasPlayed, isPlaying, currentResult, currentSentence, isLoading, playAudio]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center gap-3 py-12">
@@ -335,6 +350,11 @@ export function DictationMode({ level, topic, voiceId, onClose }: DictationModeP
             </>
           )}
         </button>
+        {!hasPlayed && !isPlaying && (
+          <p className="text-[11px] text-brown-300">
+            Cliquez ou appuyez sur <kbd className="bg-cream-200 border border-cream-300 px-1 py-0.5 rounded text-[10px]">Espace</kbd>
+          </p>
+        )}
 
         {hasPlayed && !currentResult && (
           <p className="text-xs text-brown-300">

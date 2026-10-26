@@ -104,6 +104,8 @@ export function PhoneticWordBubble({
             top: `${popoverPos.y - 8}px`,
             transform: "translate(-50%, -100%)",
           }}
+          role="tooltip"
+          aria-live="polite"
           className="z-50 w-64 bg-cream-50 text-brown-800 rounded-2xl border border-cream-200 shadow-xl p-3 text-xs animate-fade-in"
         >
           {/* Header */}

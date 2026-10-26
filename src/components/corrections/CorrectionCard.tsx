@@ -35,9 +35,11 @@ const TYPE_CONFIG: Record<
 interface CorrectionCardProps {
   correction: Correction;
   index?: number;
+  /** Phrase complète d'origine pour contextualiser la correction */
+  context?: string;
 }
 
-export function CorrectionCard({ correction, index }: CorrectionCardProps) {
+export function CorrectionCard({ correction, index, context }: CorrectionCardProps) {
   const config = TYPE_CONFIG[correction.type];
   const { Icon } = config;
 
@@ -46,6 +48,13 @@ export function CorrectionCard({ correction, index }: CorrectionCardProps) {
       className="correction-card"
       aria-label={`Correction ${index !== undefined ? index + 1 : ""} : ${correction.type}`}
     >
+      {/* Contexte optionnel : extrait de la phrase d'origine */}
+      {context && (
+        <p className="text-[11px] text-brown-300 italic mb-2 truncate" aria-label="Phrase d'origine">
+          « {context.length > 80 ? context.slice(0, 80) + "…" : context} »
+        </p>
+      )}
+
       {/* Badge type */}
       <div className="mb-2.5">
         <span className={`type-badge ${config.badgeClass}`}>

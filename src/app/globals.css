@@ -20,6 +20,20 @@
   --font-serif:         var(--font-sans);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:           #1a1008;
+    --color-surface:      #231509;
+    --color-border:       #3d2415;
+    --color-border-faint: #2e1b0f;
+    --color-text:         #f0e4d4;
+    --color-text-muted:   #c9a98a;
+    --color-text-faint:   #7d5a3c;
+    --color-accent:       #e8734a;
+    --color-accent-light: #3d1a0e;
+  }
+}
+
 
 /* ── Reset & base ───────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,6 +112,18 @@ p, span, div, button, input, textarea, select, label, time {
            hover:text-brown-600 hover:bg-cream-200;
   }
 
+  /* ─ Bouton pill (header, dock, tags) ─ */
+  .btn-pill {
+    @apply inline-flex items-center justify-center gap-1.5
+           px-2.5 py-1.5 rounded-full text-xs font-semibold
+           bg-cream-50 text-brown-600
+           border border-cream-300
+           transition-all duration-150
+           hover:bg-cream-200
+           active:scale-[0.97]
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
   /* ─ Cartes ─ */
   .card {
     @apply bg-cream-50 rounded-lg border border-cream-200 p-4;
@@ -154,13 +180,14 @@ p, span, div, button, input, textarea, select, label, time {
   }
 
   .mic-button-processing {
-    @apply mic-button bg-brown-400 border border-brown-500 text-cream-50 cursor-wait;
-    box-shadow: 0 4px 14px rgba(92, 61, 46, 0.2);
+    @apply mic-button bg-amber-400 border border-amber-500 text-white cursor-wait;
+    animation: pulse-mic-amber 1.2s ease-in-out infinite;
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
   }
 
   .mic-button-speaking {
-    @apply mic-button bg-sage-200 border border-sage-300 text-emerald-800 cursor-default;
-    box-shadow: 0 4px 14px rgba(157, 184, 157, 0.3);
+    @apply mic-button bg-emerald-500 border border-emerald-600 text-white cursor-default;
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
   }
 }
 
@@ -213,6 +240,11 @@ p, span, div, button, input, textarea, select, label, time {
   50%       { transform: scale(1.07); box-shadow: 0 6px 26px rgba(196, 81, 46, 0.55); }
 }
 
+@keyframes pulse-mic-amber {
+  0%, 100% { transform: scale(1);    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.40); }
+  50%       { transform: scale(1.04); box-shadow: 0 6px 26px rgba(245, 158, 11, 0.60); }
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -220,6 +252,11 @@ p, span, div, button, input, textarea, select, label, time {
 
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -233,10 +270,50 @@ p, span, div, button, input, textarea, select, label, time {
   40%           { transform: scaleY(1); }
 }
 
-.animate-fade-in  { animation: fade-in  0.22s ease-out; }
-.animate-slide-up { animation: slide-up 0.28s ease-out; }
-.animate-spin     { animation: spin 0.75s linear infinite; }
+/* Hero démo landing : séquence de messages animés */
+@keyframes hero-msg-1 {
+  0%, 15%   { opacity: 0; transform: translateY(6px); }
+  22%, 85%  { opacity: 1; transform: translateY(0); }
+  92%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes hero-msg-2 {
+  0%, 30%   { opacity: 0; transform: translateY(6px); }
+  37%, 85%  { opacity: 1; transform: translateY(0); }
+  92%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes hero-msg-3 {
+  0%, 48%   { opacity: 0; transform: translateY(6px); }
+  55%, 85%  { opacity: 1; transform: translateY(0); }
+  92%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes hero-msg-4 {
+  0%, 62%   { opacity: 0; transform: translateY(6px); }
+  69%, 85%  { opacity: 1; transform: translateY(0); }
+  92%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes hero-mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196, 81, 46, 0.4); }
+  50%       { box-shadow: 0 0 0 10px rgba(196, 81, 46, 0); }
+}
+@keyframes objective-toast {
+  0%   { opacity: 0; transform: translateY(12px) scale(0.95); }
+  12%  { opacity: 1; transform: translateY(0) scale(1); }
+  80%  { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-8px) scale(0.95); }
+}
+
+.animate-fade-in   { animation: fade-in   0.22s ease-out; }
+.animate-slide-up  { animation: slide-up  0.28s ease-out; }
+.animate-slide-down{ animation: slide-down 0.28s ease-out; }
+.animate-spin      { animation: spin 0.75s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.hero-msg-1 { animation: hero-msg-1 6s ease-in-out infinite; }
+.hero-msg-2 { animation: hero-msg-2 6s ease-in-out infinite; }
+.hero-msg-3 { animation: hero-msg-3 6s ease-in-out infinite; }
+.hero-msg-4 { animation: hero-msg-4 6s ease-in-out infinite; }
+.hero-mic   { animation: hero-mic-pulse 1.8s ease-in-out infinite; }
+.objective-toast { animation: objective-toast 3.2s ease-in-out forwards; }
 
 /* ── Skeleton ────────────────────────────────────────────────────────────────── */
 .skeleton {
@@ -289,4 +366,27 @@ p, span, div, button, input, textarea, select, label, time {
 /* Smooth scroll pour les ancres */
 html {
   scroll-behavior: smooth;
+}
+
+/* ── FAQ Accordéon natif ─────────────────────────────────────────────────────── */
+details summary::-webkit-details-marker { display: none; }
+details[open] summary .faq-chevron { transform: rotate(180deg); }
+.faq-chevron { transition: transform 0.25s ease; }
+
+/* ── Reduced motion ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-slide-down,
+  .studio-glow-active,
+  .mic-button-recording,
+  .mic-button-processing,
+  .hero-msg-1, .hero-msg-2, .hero-msg-3, .hero-msg-4,
+  .hero-mic, .objective-toast,
+  .wave-bar {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  html { scroll-behavior: auto; }
 }
