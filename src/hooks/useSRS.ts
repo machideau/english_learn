@@ -95,11 +95,27 @@ export function useSRS() {
     });
   }, []);
 
+  /** Ajoute un mot de vocabulaire directement comme carte SRS */
+  const addWordCard = useCallback(
+    (word: string, definitionFr: string, phonetics?: string) => {
+      const displayCorrected = phonetics ? `${definitionFr} (${phonetics})` : definitionFr;
+      addCorrections([
+        {
+          original: word.trim(),
+          corrected: displayCorrected,
+          type: "vocabulaire",
+          explication_fr: `Mot de vocabulaire : "${word.trim()}". Définition / traduction : ${definitionFr}`,
+        },
+      ]);
+    },
+    [addCorrections]
+  );
+
   /** Cartes dues aujourd'hui (dueDate <= maintenant) */
   const dueCards = cards.filter((c) => c.dueDate <= Date.now());
 
   /** Toutes les cartes triées par date de révision */
   const allCards = [...cards].sort((a, b) => a.dueDate - b.dueDate);
 
-  return { cards: allCards, dueCards, addCorrections, reviewCard };
+  return { cards: allCards, dueCards, addCorrections, addWordCard, reviewCard };
 }

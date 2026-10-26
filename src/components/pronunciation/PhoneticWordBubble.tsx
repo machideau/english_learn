@@ -3,18 +3,23 @@ import { useState, useRef, useEffect } from "react";
 import type { AnalyzedWord } from "@/types";
 import { SpeakerIcon, XIcon, WaveIcon } from "@/components/ui/Icons";
 
+import { WordLookupModal } from "@/components/dictionary/WordLookupModal";
+
 interface PhoneticWordBubbleProps {
   text: string;
   analyzedWords?: AnalyzedWord[];
   isUser?: boolean;
+  onAddToSRS?: (word: string, definition: string, phonetic?: string) => void;
 }
 
 export function PhoneticWordBubble({
   text,
   analyzedWords,
   isUser = false,
+  onAddToSRS,
 }: PhoneticWordBubbleProps) {
   const [activeWord, setActiveWord] = useState<AnalyzedWord | null>(null);
+  const [lookupWord, setLookupWord] = useState<string | null>(null);
   const [popoverPos, setPopoverPos] = useState<{ x: number; y: number } | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
@@ -57,9 +62,36 @@ export function PhoneticWordBubble({
     window.speechSynthesis.speak(utt);
   };
 
-  // Si pas de mots analysés, rendu normal
+  // Si pas de mots analysés : découpage en mots cliquables pour dictionnaire instantané
   if (!analyzedWords || analyzedWords.length === 0) {
-    return <p className="whitespace-pre-wrap">{text}</p>;
+    const tokens = text.split(/(\s+|[.,!?;:()"]+)/);
+    return (
+      <div className="relative">
+        <p className="whitespace-pre-wrap leading-relaxed inline">
+          {tokens.map((token, idx) => {
+            const isWord = /^[a-zA-Z'-]{2,}$/.test(token);
+            if (!isWord) return <span key={idx}>{token}</span>;
+            return (
+              <span
+                key={idx}
+                onClick={() => setLookupWord(token)}
+                className="cursor-pointer hover:underline hover:text-terracotta-500 rounded px-0.5 transition-colors"
+                title="Cliquez pour traduire et écouter"
+              >
+                {token}
+              </span>
+            );
+          })}
+        </p>
+        {lookupWord && (
+          <WordLookupModal
+            word={lookupWord}
+            onClose={() => setLookupWord(null)}
+            onAddToSRS={onAddToSRS}
+          />
+        )}
+      </div>
+    );
   }
 
   return (

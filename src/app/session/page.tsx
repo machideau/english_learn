@@ -22,6 +22,7 @@ import { StreakBadge } from "@/components/ui/StreakBadge";
 import { ExportButton } from "@/components/ui/ExportButton";
 import { useSRS } from "@/hooks/useSRS";
 import { useStreak } from "@/hooks/useStreak";
+import { ActivityHeatmap } from "@/components/gamification/ActivityHeatmap";
 
 const STORAGE_KEY = "english_tutor_sessions";
 const PAGE_SIZE = 10;
@@ -528,6 +529,12 @@ export default function SessionPage() {
           <div className="space-y-4">
             {/* Streak */}
             <StreakBadge streak={streak} />
+
+            {/* Heatmap d'activité sur 4 semaines */}
+            <ActivityHeatmap
+              activeDates={sessions.map((s) => new Date(s.startedAt).toISOString().split("T")[0])}
+              currentStreak={streak.currentStreak}
+            />
 
             {/* Bannière SRS si cartes dues */}
             {dueCards.length > 0 && (

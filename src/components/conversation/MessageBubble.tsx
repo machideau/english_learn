@@ -8,6 +8,7 @@ import { PhoneticWordBubble } from "@/components/pronunciation/PhoneticWordBubbl
 interface MessageBubbleProps {
   message: ChatMessage;
   onReplay?: (audioUrl: string) => void;
+  onAddToSRS?: (word: string, definition: string, phonetic?: string) => void;
 }
 
 function formatTime(timestamp: number) {
@@ -17,7 +18,7 @@ function formatTime(timestamp: number) {
   });
 }
 
-export function MessageBubble({ message, onReplay }: MessageBubbleProps) {
+export function MessageBubble({ message, onReplay, onAddToSRS }: MessageBubbleProps) {
   const isUser = message.role === "user";
   const [isReplaying, setIsReplaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -81,6 +82,7 @@ export function MessageBubble({ message, onReplay }: MessageBubbleProps) {
             text={message.content}
             analyzedWords={message.analyzedWords}
             isUser={isUser}
+            onAddToSRS={onAddToSRS}
           />
 
           {/* Réécouter l'assistant */}

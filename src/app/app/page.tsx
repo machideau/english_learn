@@ -60,13 +60,23 @@ import type { AppMode, Level, MicState, ChatApiResponse, PronunciationScore, Cor
 import { getAvatar, getVoice, DEFAULT_AVATAR_ID, DEFAULT_VOICE_ID } from "@/lib/avatars-voices";
 import type { AvatarConfig, VoiceConfig } from "@/lib/avatars-voices";
 
+import { AudioWaveformVisualizer } from "@/components/audio/AudioWaveformVisualizer";
+import { SpeechSpeedControl, type SpeechSpeed } from "@/components/audio/SpeechSpeedControl";
+import { DailyGoalTracker } from "@/components/gamification/DailyGoalTracker";
+import { playSuccessChime } from "@/lib/sound-effects";
+
 const AvatarCanvas = dynamic(
   () => import("@/components/avatar/AvatarCanvas"),
   { ssr: false, loading: () => <div className="skeleton w-full h-full" /> }
 );
 
 // ── TTS côté client via Web Speech API ──────────────────────────────────────
-function speakWithBrowser(text: string, lang = "en-US", wantMale = false): Promise<void> {
+function speakWithBrowser(
+  text: string,
+  lang = "en-US",
+  wantMale = false,
+  rate = 1.0
+): Promise<void> {
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !window.speechSynthesis) {
       resolve();
@@ -75,7 +85,7 @@ function speakWithBrowser(text: string, lang = "en-US", wantMale = false): Promi
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
     utt.lang = lang;
-    utt.rate = 0.95;
+    utt.rate = rate;
     utt.pitch = wantMale ? 0.85 : 1.05;
 
     // Choisir la voix la plus adaptée (langue + genre)
@@ -116,8 +126,19 @@ export default function HomePage() {
   const mic = useMicrophone(); // fallback si Web Speech indisponible
 
   const { currentSession, sessions, startSession, addMessage, endSession } = useSession();
-  const { cards: srsCards, dueCards, addCorrections: addSRSCards, reviewCard } = useSRS();
+  const { cards: srsCards, dueCards, addCorrections: addSRSCards, addWordCard, reviewCard } = useSRS();
   const { streak, recordActivity, recordSession } = useStreak();
+
+  const userMessagesCount = currentSession?.messages.filter((m) => m.role === "user").length ?? 0;
+  const gamificationStats = {
+    totalSessions: streak.totalSessions,
+    totalMessages: streak.totalMessages,
+    currentStreak: streak.currentStreak,
+    totalSRSCards: srsCards.length,
+    roleplaysDone: sessions.filter((s) => s.roleplay).length,
+    dictationsPerfect: 1,
+    todayMessages: userMessagesCount,
+  };
 
   const [level, setLevel] = useState<Level>("intermédiaire");
   const [topic, setTopic] = useState<string>("");
@@ -135,6 +156,7 @@ export default function HomePage() {
   const [isSRSOpen, setIsSRSOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig>(() => getAvatar(DEFAULT_AVATAR_ID));
   const [selectedVoice, setSelectedVoice] = useState<VoiceConfig>(() => getVoice(DEFAULT_VOICE_ID));
+  const [speechSpeed, setSpeechSpeed] = useState<SpeechSpeed>(1.0);
   const [showPersonalize, setShowPersonalize] = useState(false);
   const [activeMode, setActiveMode] = useState<AppMode>("conversation");
   const [isModeModalOpen, setIsModeModalOpen] = useState(false);
@@ -292,7 +314,7 @@ export default function HomePage() {
           // Résumer l'AudioContext avant de lancer la lip-sync
           // (l'avatar.speak sans audio déclenche speakText pour la lip-sync)
           await Promise.all([
-            speakWithBrowser(chatData.reply),
+            speakWithBrowser(chatData.reply, "en-US", selectedVoice.gender === "M", speechSpeed),
             avatarRef.current?.speak(chatData.reply),
           ]);
 
@@ -342,11 +364,11 @@ export default function HomePage() {
       if (scenario.avatarMood) {
         avatarRef.current?.setEmotion(scenario.avatarMood);
       }
-      await speakWithBrowser(scenario.initialMessage, "en-US", selectedVoice.gender === "M");
+      await speakWithBrowser(scenario.initialMessage, "en-US", selectedVoice.gender === "M", speechSpeed);
       setAvatarSubtitle("");
       setMicButtonState("idle");
     },
-    [startSession, selectedVoice, addMessage]
+    [startSession, selectedVoice, addMessage, speechSpeed]
   );
 
   // ── Ouvrir la Carte Bilan Partageable ──────────────────────────────────────
@@ -570,6 +592,14 @@ export default function HomePage() {
 
         {/* Navigation compacte */}
         <nav className="flex items-center gap-1.5 sm:gap-2">
+          {/* Objectif quotidien & Badges */}
+          <DailyGoalTracker
+            todayMessages={userMessagesCount}
+            goalTarget={5}
+            stats={gamificationStats}
+            className="hidden sm:inline-flex"
+          />
+
           {/* Streak compact */}
           <StreakBadge streak={streak} compact />
 
@@ -925,8 +955,11 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* MicButton — zone centrale prominente */}
-              <div className="flex-1 flex justify-center">
+              {/* MicButton & AudioWaveformVisualizer — zone centrale prominente */}
+              <div className="flex-1 flex flex-col items-center justify-center gap-1.5">
+                {(micButtonState === "recording" || micButtonState === "speaking" || micButtonState === "processing") && (
+                  <AudioWaveformVisualizer state={micButtonState} height={28} className="animate-fade-in" />
+                )}
                 <MicButton
                   state={micButtonState}
                   onClick={handleMicClick}
@@ -974,21 +1007,25 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Bouton Personnaliser (compact) */}
-            <button
-              onClick={() => setShowPersonalize(true)}
-              disabled={micButtonState === "processing" || micButtonState === "speaking"}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brown-400 bg-cream-100/80 border border-cream-200 hover:bg-cream-200 hover:text-brown-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              aria-label="Personnaliser l'avatar et la voix"
-            >
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-              <span>{selectedAvatar.label}</span>
-              <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
-              <span>{selectedVoice.label}</span>
-            </button>
+            {/* Contrôles avatar et débit vocal */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              <button
+                onClick={() => setShowPersonalize(true)}
+                disabled={micButtonState === "processing" || micButtonState === "speaking"}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brown-500 bg-cream-100/80 border border-cream-200 hover:bg-cream-200 hover:text-brown-700 transition-all shadow-xs disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label="Personnaliser l'avatar et la voix"
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <span>{selectedAvatar.label}</span>
+                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
+                <span>{selectedVoice.label}</span>
+              </button>
+
+              <SpeechSpeedControl speed={speechSpeed} onChange={setSpeechSpeed} />
+            </div>
           </div>
         </section>
 
@@ -1060,6 +1097,7 @@ export default function HomePage() {
               <ConversationView
                 messages={currentSession?.messages ?? []}
                 onReplay={(url) => new Audio(url).play().catch(() => {})}
+                onAddToSRS={addWordCard}
                 isTyping={isTyping}
               />
 

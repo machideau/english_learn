@@ -6,12 +6,14 @@ import { MessageBubble } from "./MessageBubble";
 interface ConversationViewProps {
   messages: ChatMessage[];
   onReplay?: (audioUrl: string) => void;
+  onAddToSRS?: (word: string, definition: string, phonetic?: string) => void;
   isTyping?: boolean;
 }
 
 export function ConversationView({
   messages,
   onReplay,
+  onAddToSRS,
   isTyping,
 }: ConversationViewProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -50,6 +52,7 @@ export function ConversationView({
           key={`${msg.role}-${msg.timestamp}`}
           message={msg}
           onReplay={onReplay}
+          onAddToSRS={onAddToSRS}
         />
       ))}
 

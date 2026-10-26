@@ -154,6 +154,11 @@ export interface ConversationSession {
   topic?: string;
   messages: ChatMessage[];
   allCorrections: Correction[];
+  roleplay?: {
+    scenarioId: string;
+    scenarioTitle: string;
+    completed: boolean;
+  };
 }
 
 // ─── États de l'interface ────────────────────────────────────────────────────
