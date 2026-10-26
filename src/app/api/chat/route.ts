@@ -12,10 +12,25 @@ const CorrectionSchema = z.object({
   explication_fr: z.string(),
 });
 
+const RoleplayObjectiveSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+});
+
+const RoleplayContextSchema = z.object({
+  scenarioId: z.string(),
+  scenarioTitle: z.string(),
+  avatarRole: z.string(),
+  userRole: z.string(),
+  context: z.string(),
+  objectives: z.array(RoleplayObjectiveSchema),
+});
+
 const ChatResponseSchema = z.object({
   reply: z.string(),
   corrections: z.array(CorrectionSchema).max(2),
   niveau_estime: z.enum(["débutant", "intermédiaire", "avancé"]),
+  completed_objective_ids: z.array(z.string()).optional(),
 });
 
 const RequestSchema = z.object({
@@ -29,11 +44,59 @@ const RequestSchema = z.object({
   level: z.enum(["débutant", "intermédiaire", "avancé"]),
   interfaceLanguage: z.enum(["fr", "en"]).default("fr"),
   topic: z.string().optional(),
+  roleplay: RoleplayContextSchema.optional(),
 });
 
 // ─── Prompt système ───────────────────────────────────────────────────────────
 
-function buildSystemPrompt(level: string, topic?: string): string {
+function buildSystemPrompt(
+  level: string,
+  topic?: string,
+  roleplay?: z.infer<typeof RoleplayContextSchema>
+): string {
+  if (roleplay) {
+    const objectivesList = roleplay.objectives
+      .map((o) => `- ID "${o.id}": ${o.label}`)
+      .join("\n");
+
+    return `You are acting in an immersive English roleplay simulation for a French-speaking student.
+
+YOUR CHARACTER:
+- Role: ${roleplay.avatarRole} in the scenario "${roleplay.scenarioTitle}".
+- User's Role: ${roleplay.userRole}.
+- Situation & Context: ${roleplay.context}.
+
+RULES:
+- Stay 100% strictly in character. Do NOT break character.
+- Speak natural conversational English, adapted to the student's level (${level}).
+- Keep replies punchy, engaging, and realistic (2-4 sentences max). Ask a relevant question or prompt a reply.
+- Never use emojis, emoticons, or icons.
+
+SCENARIO OBJECTIVES TO TRACK:
+${objectivesList}
+Evaluate if the user's latest message (or conversation context) fulfills one or more of these objectives.
+If an objective was completed in this turn, include its ID in the "completed_objective_ids" array. Only mark an objective completed if the user made a genuine attempt to fulfill it.
+
+CORRECTIONS:
+- Put minor corrections in the JSON "corrections" field (max 2). Never mention them in your character's spoken reply.
+- Explain in simple French in "explication_fr".
+
+OUTPUT FORMAT (strict JSON, no markdown wrapper):
+{
+  "reply": "Your character's natural spoken line (no emojis)",
+  "corrections": [
+    {
+      "original": "incorrect user phrasing",
+      "corrected": "natural version",
+      "type": "grammaire|vocabulaire|tournure|prononciation",
+      "explication_fr": "courte explication en français"
+    }
+  ],
+  "niveau_estime": "débutant|intermédiaire|avancé",
+  "completed_objective_ids": ["id-of-completed-objective"]
+}`;
+  }
+
   const topicLine = topic
     ? `The conversation topic is: "${topic}". Keep the discussion on this theme.`
     : "You can choose any everyday topic.";
@@ -120,8 +183,8 @@ export async function POST(req: NextRequest) {
       return errorResponse("Paramètres invalides : " + parsed.error.message, 400);
     }
 
-    const { history, userMessage, level, topic } = parsed.data;
-    const systemPrompt = buildSystemPrompt(level, topic);
+    const { history, userMessage, level, topic, roleplay } = parsed.data;
+    const systemPrompt = buildSystemPrompt(level, topic, roleplay);
 
     let rawContent: string;
     try {
@@ -166,6 +229,7 @@ export async function POST(req: NextRequest) {
         reply: "I understand! Let's keep practicing.",
         corrections: [],
         niveau_estime: level,
+        completedObjectiveIds: [],
       });
     }
 
@@ -181,6 +245,7 @@ export async function POST(req: NextRequest) {
       reply: sanitizedReply,
       corrections: sanitizedCorrections,
       niveau_estime: validated.data.niveau_estime,
+      completedObjectiveIds: validated.data.completed_objective_ids ?? [],
     });
   });
 }

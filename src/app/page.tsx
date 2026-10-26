@@ -1,884 +1,628 @@
-"use client";
-import { useRef, useState, useCallback, useEffect } from "react";
-import dynamic from "next/dynamic";
+import type { Metadata } from "next";
 import Link from "next/link";
+import { Logo } from "@/components/ui/Logo";
 
-import { MicButton } from "@/components/ui/MicButton";
-import { LevelSelector } from "@/components/ui/LevelSelector";
-import { TopicSelector } from "@/components/ui/TopicSelector";
-import { ErrorBanner } from "@/components/ui/ErrorBanner";
-import { PronunciationToast } from "@/components/ui/PronunciationToast";
-import { AvatarVoiceSelector } from "@/components/ui/AvatarVoiceSelector";
-import { StreakBadge } from "@/components/ui/StreakBadge";
-import { ExportButton } from "@/components/ui/ExportButton";
-import { ConversationView } from "@/components/conversation/ConversationView";
-import { TextInput } from "@/components/conversation/TextInput";
-import { CorrectionCard } from "@/components/corrections/CorrectionCard";
-import { FlashcardModal } from "@/components/flashcards/FlashcardModal";
-import { SRSFlashcardModal } from "@/components/flashcards/SRSFlashcardModal";
-import { ModeModal } from "@/components/modes/ModeModal";
-import {
-  CalendarIcon,
-  MessageIcon,
-  PencilIcon,
-  CheckIcon,
-  CardsIcon,
-  MicIcon,
-  RepeatIcon,
-  HeadphonesIcon,
-  FileEditIcon,
-  GraduationIcon,
-} from "@/components/ui/Icons";
+export const metadata: Metadata = {
+  title: "English Tutor AI — Pratiquez l'anglais à l'oral avec un avatar 3D",
+  description:
+    "Apprenez l'anglais oral gratuitement avec un tuteur IA et un avatar 3D. Corrections en temps réel, prononciation, flashcards et leçons structurées. Adapté à tous les niveaux.",
+  keywords: [
+    "apprendre anglais",
+    "apprendre anglais oral",
+    "pratiquer anglais oral",
+    "parler anglais couramment",
+    "tuteur anglais IA",
+    "conversation anglais",
+    "conversation anglais IA",
+    "avatar 3D anglais",
+    "correction prononciation anglais",
+    "phonétique anglais",
+    "simulation entretien anglais",
+    "test de niveau anglais",
+    "test niveau anglais gratuit",
+    "anglais A1 A2 B1 B2 C1",
+    "anglais débutant",
+    "anglais intermédiaire",
+    "anglais professionnel",
+    "cours anglais gratuit",
+    "application anglais oral",
+    "mode mains libres anglais",
+    "speaking english",
+    "learn english speaking",
+    "practice spoken english",
+    "AI english tutor",
+    "english roleplay practice",
+    "machideau",
+    "Lefaure SAMIE",
+  ],
+  openGraph: {
+    title: "English Tutor AI — Parlez anglais avec un avatar 3D",
+    description:
+      "Pratiquez l'anglais oral avec un tuteur IA intelligent. Corrections grammaticales, prononciation, flashcards SRS et leçons structurées. Gratuit.",
+    type: "website",
+    locale: "fr_FR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "English Tutor AI — Parlez anglais avec un avatar 3D",
+    description:
+      "Pratiquez l'anglais oral avec un tuteur IA. Corrections en temps réel, prononciation et flashcards.",
+  },
+  alternates: {
+    canonical: "/",
+  },
+};
 
-import { useMicrophone } from "@/hooks/useMicrophone";
-import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
-import { useSession } from "@/hooks/useSession";
-import { useSRS } from "@/hooks/useSRS";
-import { useStreak } from "@/hooks/useStreak";
+// ─── Données statiques ────────────────────────────────────────────────────────
 
-import type { AvatarHandle } from "@/components/avatar/AvatarCanvas";
-import type { AppMode, Level, MicState, ChatApiResponse, PronunciationScore, Correction } from "@/types";
-import { getAvatar, getVoice, DEFAULT_AVATAR_ID, DEFAULT_VOICE_ID } from "@/lib/avatars-voices";
-import type { AvatarConfig, VoiceConfig } from "@/lib/avatars-voices";
+const FEATURES = [
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+        <line x1="12" x2="12" y1="19" y2="22" />
+      </svg>
+    ),
+    title: "Conversation naturelle",
+    description:
+      "Parlez avec un tuteur IA qui s'adapte à votre niveau et corrige vos erreurs sans couper le fil de la conversation.",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="8" r="5" />
+        <path d="M3 21v-1a9 9 0 0 1 18 0v1" />
+      </svg>
+    ),
+    title: "Avatar 3D avec lip-sync",
+    description:
+      "Un avatar 3D réaliste synchronise ses lèvres sur chaque réponse. 7 personnages au choix, 12 voix naturelles.",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M14 2l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="8" y1="13" x2="16" y2="13" />
+        <line x1="8" y1="17" x2="16" y2="17" />
+      </svg>
+    ),
+    title: "Corrections pédagogiques",
+    description:
+      "Grammaire, vocabulaire, tournures, prononciation — chaque faute est expliquée en français, clairement et sans jugement.",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="2" y="5" width="12" height="13" rx="2" />
+        <path d="M6 2h10a2 2 0 0 1 2 2v11" />
+      </svg>
+    ),
+    title: "Flashcards intelligentes",
+    description:
+      "Vos erreurs deviennent des cartes de révision avec l'algorithme SM-2. Les mots difficiles reviennent plus souvent jusqu'à être maîtrisés.",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M2 10L10 6l8 4-8 4z" fill="currentColor" fillOpacity="0.15" />
+        <path d="M2 10l8 4 8-4" />
+        <path d="M16 12v5c-2 1-4 1.5-6 1.5S6 18 4 17v-5" />
+      </svg>
+    ),
+    title: "Mises en situation & Roleplay",
+    description:
+      "Simulez des entretiens d'embauche, des commandes au café ou des contrôles d'aéroport avec missions et objectifs secrets.",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M5 4h10v5a5 5 0 0 1-10 0V4z" />
+        <path d="M5 6H2a2 2 0 0 0 0 4h3" />
+        <path d="M15 6h3a2 2 0 0 1 0 4h-3" />
+        <path d="M10 14v3" />
+        <path d="M7 17h6" />
+      </svg>
+    ),
+    title: "Test CEFR & Roadmap A1-C1",
+    description:
+      "Évaluez votre niveau officiel en 3 minutes (A1 à C1) et suivez un parcours d'étapes déblocables étape par étape.",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M3 14a7 7 0 1 1 14 0" />
+        <rect x="2" y="14" width="4" height="5" rx="1" />
+        <rect x="14" y="14" width="4" height="5" rx="1" />
+      </svg>
+    ),
+    title: "Mode Mains Libres & PWA",
+    description:
+      "Installez l'app sur votre téléphone et pratiquez en marchant dans la rue sans toucher l'écran (détection auto de la parole).",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M2 12h2M6 8v8M10 4v16M14 7v10M18 10v4M22 12h-2" />
+      </svg>
+    ),
+    title: "Analyse Phonétique Mot-à-Mot",
+    description:
+      "Style Elsa Speak : visualisez chaque son à améliorer, écoutez la prononciation au ralenti et accédez aux astuces articulatoires.",
+  },
+];
 
-const AvatarCanvas = dynamic(
-  () => import("@/components/avatar/AvatarCanvas"),
-  { ssr: false, loading: () => <div className="skeleton w-full h-full" /> }
-);
+const HOW_IT_WORKS = [
+  {
+    step: "01",
+    title: "Choisissez votre niveau",
+    description: "Débutant, intermédiaire ou avancé. L'IA s'adapte automatiquement à vos réponses.",
+  },
+  {
+    step: "02",
+    title: "Parlez ou écrivez",
+    description: "Utilisez le micro (Chrome/Edge) ou tapez votre message. L'avatar vous répond en moins de 2 secondes.",
+  },
+  {
+    step: "03",
+    title: "Progressez avec les corrections",
+    description: "Chaque échange génère des corrections et des flashcards. Révisez-les entre deux sessions.",
+  },
+];
 
-// ── TTS côté client via Web Speech API ──────────────────────────────────────
-function speakWithBrowser(text: string, lang = "en-US", wantMale = false): Promise<void> {
-  return new Promise((resolve) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) {
-      resolve();
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = lang;
-    utt.rate = 0.95;
-    utt.pitch = wantMale ? 0.85 : 1.05;
+const LEVELS = [
+  {
+    label: "Débutant",
+    color: "bg-emerald-50 border-emerald-200 text-emerald-700",
+    dot: "bg-emerald-500",
+    description: "Vocabulaire simple, phrases courtes, sujets du quotidien.",
+    examples: ["Se présenter", "Commander au restaurant", "Demander son chemin"],
+  },
+  {
+    label: "Intermédiaire",
+    color: "bg-blue-50 border-blue-200 text-blue-700",
+    dot: "bg-blue-500",
+    description: "Conversations fluides, temps composés, expressions idiomatiques.",
+    examples: ["Voyages & tourisme", "Travail & entretiens", "Opinions & débats"],
+  },
+  {
+    label: "Avancé",
+    color: "bg-violet-50 border-violet-200 text-violet-700",
+    dot: "bg-violet-500",
+    description: "Nuances, conditionnels, idiomes, argumentation complexe.",
+    examples: ["Présentations professionnelles", "Négociations", "Analyses critiques"],
+  },
+];
 
-    // Choisir la voix la plus adaptée (langue + genre)
-    const allVoices = window.speechSynthesis.getVoices();
-    const langVoices = allVoices.filter((v) => v.lang.startsWith(lang.slice(0, 5)));
-    const anyEn = allVoices.filter((v) => v.lang.startsWith("en"));
-    const pool = langVoices.length > 0 ? langVoices : anyEn;
-    const maleKw = ["male", "man", "david", "james", "daniel", "george", "thomas", "alex"];
-    const femaleKw = ["female", "woman", "samantha", "victoria", "emma", "kate", "karen", "moira"];
-    const scored = pool.map((v) => {
-      const n = v.name.toLowerCase();
-      const isMale = maleKw.some((k) => n.includes(k));
-      const isFemale = femaleKw.some((k) => n.includes(k));
-      let score = 0;
-      if (wantMale && isMale) score += 2;
-      if (!wantMale && isFemale) score += 2;
-      if (!isMale && !isFemale) score += 1;
-      return { v, score };
-    });
-    scored.sort((a, b) => b.score - a.score);
-    const best = scored[0]?.v ?? pool[0];
-    if (best) utt.voice = best;
+const FAQ = [
+  {
+    q: "Est-ce gratuit ?",
+    a: "L'application est open source et auto-hébergeable. Elle utilise l'API OpenRouter — les coûts sont très faibles (quelques centimes par session avec les modèles gratuits disponibles).",
+  },
+  {
+    q: "Ai-je besoin d'une clé API ?",
+    a: "Pour la version complète oui — une clé OpenRouter suffit. Certaines fonctionnalités (dictée, répétition) fonctionnent sans clé via la Web Speech API du navigateur.",
+  },
+  {
+    q: "Quels navigateurs sont supportés ?",
+    a: "Chrome et Edge pour une expérience complète (micro natif, Web Speech API). Firefox et Safari fonctionnent mais avec le micro en fallback Whisper uniquement.",
+  },
+  {
+    q: "Mes données sont-elles privées ?",
+    a: "Toutes vos sessions, corrections et flashcards sont stockées localement dans votre navigateur. Aucune donnée n'est envoyée à un serveur tiers autre qu'OpenRouter pour les appels IA.",
+  },
+  {
+    q: "Puis-je pratiquer d'autres langues ?",
+    a: "L'architecture supporte d'autres langues cibles. Actuellement, l'interface est en français et l'apprentissage cible l'anglais. D'autres langues sont prévues.",
+  },
+];
 
-    let resolved = false;
-    const done = () => { if (!resolved) { resolved = true; resolve(); } };
-    const timer = setTimeout(done, 30_000);
-    utt.onend = () => { clearTimeout(timer); done(); };
-    utt.onerror = () => { clearTimeout(timer); done(); };
-    window.speechSynthesis.speak(utt);
-  });
+// ─── Composants ───────────────────────────────────────────────────────────────
+
+function NavBar() {
+  return (
+    <header className="sticky top-0 z-50 bg-cream-50/90 backdrop-blur-md border-b border-cream-200/80">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <Logo size={34} />
+          <span className="font-bold text-brown-700 tracking-tight text-sm">English Tutor AI</span>
+        </div>
+
+        <nav className="hidden sm:flex items-center gap-6 text-sm text-brown-400 font-medium">
+          <a href="#features" className="hover:text-brown-600 transition-colors">Fonctionnalités</a>
+          <a href="#how-it-works" className="hover:text-brown-600 transition-colors">Comment ça marche</a>
+          <a href="#faq" className="hover:text-brown-600 transition-colors">FAQ</a>
+        </nav>
+
+        <Link
+          href="/app"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white text-sm font-semibold transition-all shadow-sm active:scale-95"
+        >
+          Commencer gratuitement
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+            <path d="M2 7h10M7 2l5 5-5 5" />
+          </svg>
+        </Link>
+      </div>
+    </header>
+  );
 }
 
-export default function HomePage() {
-  const avatarRef = useRef<AvatarHandle>(null);
-
-  // Transcription : Web Speech API (priorité) + fallback MediaRecorder+OpenRouter
-  const speechRec = useSpeechRecognition();
-  const mic = useMicrophone(); // fallback si Web Speech indisponible
-
-  const { currentSession, sessions, startSession, addMessage, endSession } = useSession();
-  const { cards: srsCards, dueCards, addCorrections: addSRSCards, reviewCard } = useSRS();
-  const { streak, recordActivity, recordSession } = useStreak();
-
-  const [level, setLevel] = useState<Level>("intermédiaire");
-  const [topic, setTopic] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
-  const [micButtonState, setMicButtonState] = useState<MicState>("idle");
-  const [isTyping, setIsTyping] = useState(false);
-  const [showCorrections, setShowCorrections] = useState(true);
-  const [avatarSubtitle, setAvatarSubtitle] = useState("");
-  const [sessionActive, setSessionActive] = useState(false);
-  const [transcriptionMode, setTranscriptionMode] = useState<"webspeech" | "openrouter" | "unknown">("unknown");
-  const [pronunciationScore, setPronunciationScore] = useState<PronunciationScore | null>(null);
-  const [rightTab, setRightTab] = useState<"chat" | "corrections">("chat");
-  const [mobileTab, setMobileTab] = useState<"studio" | "chat" | "corrections">("studio");
-  const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
-  const [isSRSOpen, setIsSRSOpen] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<AvatarConfig>(() => getAvatar(DEFAULT_AVATAR_ID));
-  const [selectedVoice, setSelectedVoice] = useState<VoiceConfig>(() => getVoice(DEFAULT_VOICE_ID));
-  const [showPersonalize, setShowPersonalize] = useState(false);
-  const [activeMode, setActiveMode] = useState<AppMode>("conversation");
-  const [isModeModalOpen, setIsModeModalOpen] = useState(false);
-  useEffect(() => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    setTranscriptionMode(SR ? "webspeech" : "openrouter");
-  }, []);
-
-  const ensureSession = useCallback(() => {
-    if (!currentSession || currentSession.endedAt) {
-      return startSession(level, topic || undefined);
-    }
-    return currentSession;
-  }, [currentSession, startSession, level, topic]);
-
-  // ── Envoi d'un message ────────────────────────────────────────────────────
-  const handleUserMessage = useCallback(
-    async (text: string) => {
-      setError(null);
-      const session = ensureSession();
-      if (!sessionActive) setSessionActive(true);
-
-      addMessage({ role: "user", content: text });
-      setMicButtonState("processing");
-      setIsTyping(true);
-      avatarRef.current?.setEmotion("thinking");
-      // Enregistrer l'activité pour le streak
-      recordActivity();
-
-      try {
-        const history = session.messages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
-
-        const chatRes = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            history,
-            userMessage: text,
-            level,
-            interfaceLanguage: "fr",
-            topic: topic || undefined,
-          }),
-        });
-
-        if (!chatRes.ok) {
-          const errData = await chatRes.json().catch(() => ({}));
-          throw new Error(errData.error ?? `Erreur HTTP ${chatRes.status}`);
-        }
-
-        const chatData: ChatApiResponse = await chatRes.json();
-        setIsTyping(false);
-        if (chatData.niveau_estime !== level) setLevel(chatData.niveau_estime);
-
-        // Ajouter les nouvelles corrections au SRS
-        if (chatData.corrections.length > 0) {
-          addSRSCards(chatData.corrections);
-        }
-
-        // ── TTS : essayer OpenRouter d'abord, fallback Web Speech ──
-        setMicButtonState("speaking");
-        avatarRef.current?.setEmotion("happy");
-
-        let ttsOk = false;
-        try {
-          const speakRes = await fetch("/api/speak", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: chatData.reply, voice: selectedVoice.id }),
-          });
-          if (speakRes.ok) {
-            const speakData = await speakRes.json();
-            if (speakData.audioBase64) {
-              const audioUrl = `data:${speakData.mimeType};base64,${speakData.audioBase64}`;
-              addMessage({
-                role: "assistant",
-                content: chatData.reply,
-                corrections: chatData.corrections,
-                audioUrl,
-              });
-              setAvatarSubtitle(chatData.reply);
-              await avatarRef.current?.speak(
-                chatData.reply,
-                speakData.audioBase64,
-                speakData.mimeType
-              );
-              setAvatarSubtitle("");
-              ttsOk = true;
-            }
-          }
-        } catch {
-          // TTS OpenRouter indisponible
-        }
-
-        if (!ttsOk) {
-          // Fallback : Web Speech API TTS (navigateur) + lip-sync avatar en parallèle
-          addMessage({
-            role: "assistant",
-            content: chatData.reply,
-            corrections: chatData.corrections,
-          });
-          setAvatarSubtitle(chatData.reply);
-
-          // Résumer l'AudioContext avant de lancer la lip-sync
-          // (l'avatar.speak sans audio déclenche speakText pour la lip-sync)
-          await Promise.all([
-            speakWithBrowser(chatData.reply),
-            avatarRef.current?.speak(chatData.reply),
-          ]);
-
-          setAvatarSubtitle("");
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Une erreur inattendue est survenue.");
-        setIsTyping(false);
-        avatarRef.current?.setEmotion("neutral");
-      } finally {
-        setMicButtonState("idle");
-      }
-    },
-    [ensureSession, sessionActive, addMessage, level, topic, selectedVoice]
-  );
-
-  // ── Gestion vocale : Clic (Toggle) + Maintien (Push-to-talk) ──────────────
-  const isHoldingRef = useRef(false);
-  const pressTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const startVoiceRecording = useCallback(async () => {
-    setError(null);
-    setMicButtonState("recording");
-
-    if (transcriptionMode === "webspeech" || transcriptionMode === "unknown") {
-      speechRec.startListening();
-    } else {
-      await mic.startRecording();
-    }
-  }, [transcriptionMode, speechRec, mic]);
-
-  const stopVoiceRecording = useCallback(async () => {
-    setMicButtonState("processing");
-
-    if (transcriptionMode === "webspeech" || transcriptionMode === "unknown") {
-      const text = await speechRec.stopListening();
-
-      if (!text?.trim()) {
-        if (transcriptionMode === "unknown") {
-          setTranscriptionMode("openrouter");
-        }
-        setMicButtonState("idle");
-        if (speechRec.error) setError(speechRec.error);
-        else setError("Aucune parole détectée. Réessayez.");
-        return;
-      }
-
-      await handleUserMessage(text.trim());
-    } else {
-      const result = await mic.stopRecording();
-      if (!result) {
-        setMicButtonState("idle");
-        return;
-      }
-
-      try {
-        const transcribeRes = await fetch("/api/transcribe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            audioBase64: result.audioBase64,
-            mimeType: result.mimeType,
-          }),
-        });
-        if (!transcribeRes.ok) {
-          const e = await transcribeRes.json().catch(() => ({}));
-          throw new Error(
-            e.error ?? "Transcription indisponible. Utilisez la saisie texte."
-          );
-        }
-        const { text } = await transcribeRes.json();
-        if (!text?.trim()) {
-          setMicButtonState("idle");
-          setError("Aucune parole détectée. Réessayez.");
-          return;
-        }
-
-        // ── Analyse de prononciation (en parallèle avec le message) ──
-        fetch("/api/pronunciation", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            audioBase64: result.audioBase64,
-            mimeType: result.mimeType,
-            referenceText: text.trim(),
-          }),
-        })
-          .then((r) => r.ok ? r.json() : null)
-          .then((score: PronunciationScore | null) => {
-            if (score && score.issues.length > 0) {
-              setPronunciationScore(score);
-            }
-          })
-          .catch(() => {/* silencieux */});
-
-        await handleUserMessage(text.trim());
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Erreur de transcription."
-        );
-        setMicButtonState("idle");
-      }
-    }
-  }, [transcriptionMode, speechRec, mic, handleUserMessage]);
-
-  const handleMicClick = useCallback(async () => {
-    if (isHoldingRef.current) {
-      isHoldingRef.current = false;
-      return;
-    }
-    if (micButtonState === "idle") {
-      await startVoiceRecording();
-    } else if (micButtonState === "recording") {
-      await stopVoiceRecording();
-    }
-  }, [micButtonState, startVoiceRecording, stopVoiceRecording]);
-
-  const handleMicDown = useCallback(() => {
-    if (micButtonState !== "idle") return;
-    isHoldingRef.current = false;
-    pressTimerRef.current = setTimeout(() => {
-      isHoldingRef.current = true;
-      startVoiceRecording();
-    }, 350);
-  }, [micButtonState, startVoiceRecording]);
-
-  const handleMicUp = useCallback(() => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-    if (isHoldingRef.current && micButtonState === "recording") {
-      stopVoiceRecording();
-    }
-  }, [micButtonState, stopVoiceRecording]);
-
-  const handleCancel = useCallback(() => {
-    if (transcriptionMode === "webspeech") {
-      speechRec.cancelListening();
-    } else {
-      mic.cancelRecording();
-    }
-    setMicButtonState("idle");
-    setError(null);
-  }, [transcriptionMode, speechRec, mic]);
-
-  const handleEndSession = useCallback(() => {
-    endSession();
-    recordSession();
-    setSessionActive(false);
-    setMicButtonState("idle");
-    window.speechSynthesis?.cancel();
-    avatarRef.current?.stopSpeaking();
-    avatarRef.current?.setEmotion("neutral");
-  }, [endSession, recordSession]);
-
-  const allCorrections = currentSession?.allCorrections ?? [];
-  const displayError = error || mic.error || speechRec.error;
-
-  // ── Ouvrir un mode spécial ────────────────────────────────────────────────
-  const openMode = useCallback((mode: AppMode) => {
-    setActiveMode(mode);
-    setIsModeModalOpen(true);
-  }, []);
-
-  // ── Correction de texte → ajouter aux flashcards SRS ────────────────────
-  const handleTextCorrections = useCallback((corrections: Correction[]) => {
-    addSRSCards(corrections);
-  }, [addSRSCards]);
-
+function Hero() {
   return (
-    <div className="flex flex-col h-dvh max-h-dvh overflow-hidden bg-cream-100">
+    <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28">
+      {/* Fond radial décoratif */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-radial from-terracotta-100/60 via-cream-100/20 to-transparent rounded-full blur-3xl" />
+      </div>
 
-      {/* ── Header Glassmorphism ── */}
-      <header className="glass-header sticky top-0 z-20 px-3 sm:px-6 py-2.5 shrink-0 flex items-center justify-between no-print shadow-subtle">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-terracotta-500 to-terracotta-600 text-white flex items-center justify-center shadow-sm shrink-0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 text-center">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-terracotta-50 border border-terracotta-200 text-terracotta-700 text-xs font-semibold mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-terracotta-500 animate-pulse" aria-hidden />
+          Tuteur IA disponible 24h/24
+        </div>
+
+        {/* Titre principal — optimisé SEO H1 */}
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brown-700 tracking-tight leading-tight max-w-4xl mx-auto">
+          Pratiquez l'anglais oral avec un{" "}
+          <span className="text-terracotta-500">tuteur IA</span>{" "}
+          et un avatar 3D
+        </h1>
+
+        <p className="mt-6 text-lg sm:text-xl text-brown-400 max-w-2xl mx-auto leading-relaxed">
+          Conversez en anglais, recevez des corrections instantanées, révisez avec des flashcards intelligentes.
+          Gratuit, dans votre navigateur, sans inscription.
+        </p>
+
+        {/* CTA */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <Link
+            href="/app"
+            className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white text-base font-bold transition-all shadow-lift active:scale-95"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
               <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
               <line x1="12" x2="12" y1="19" y2="22" />
             </svg>
-          </div>
-          <div>
-            <h1 className="text-sm font-bold text-brown-700 tracking-tight leading-tight">
-              English Tutor
-            </h1>
-            <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden />
-              <span className="text-[10px] sm:text-[11px] text-brown-400 font-medium inline-flex items-center gap-1.5">
-                <span>{selectedAvatar.label}</span>
-                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
-                <span>Tuteur IA</span>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Contrôles compacts dans le header sur écran >= lg */}
-        <div className="hidden lg:flex items-center gap-3">
-          <LevelSelector value={level} onChange={setLevel} compact disabled={sessionActive} />
-          <TopicSelector value={topic} onChange={setTopic} compact disabled={sessionActive} />
-        </div>
-
-        {/* Navigation & actions */}
-        <nav className="flex items-center gap-2">
-          <Link
-            href="/session"
-            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-brown-600 bg-cream-50 hover:bg-cream-200 border border-cream-300 transition-colors shadow-subtle shrink-0"
-            aria-label="Bilans de séance et flashcards"
-          >
-            <CalendarIcon size={14} />
-            <span className="hidden xs:inline sm:inline">Bilans</span>
-            {sessions.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-cream-300 text-[10px] font-bold text-brown-600">
-                {sessions.length}
-              </span>
-            )}
+            Commencer maintenant — c'est gratuit
           </Link>
-
-          {/* Streak compact */}
-          <StreakBadge streak={streak} compact />
-          {sessionActive && (
-            <button
-              onClick={handleEndSession}
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold bg-terracotta-50 text-terracotta-600 border border-terracotta-200 hover:bg-terracotta-100 transition-colors shrink-0"
-            >
-              Terminer
-            </button>
-          )}
-        </nav>
-      </header>
-
-      {/* Barre de contrôles sur tablette / mobile */}
-      {!sessionActive && (
-        <div className="lg:hidden flex items-center justify-between gap-2 px-3 py-1.5 bg-cream-50/80 border-b border-cream-200 shrink-0 overflow-x-auto">
-          <LevelSelector value={level} onChange={setLevel} compact />
-          <TopicSelector value={topic} onChange={setTopic} compact />
+          <a
+            href="#how-it-works"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-cream-300 bg-cream-50 hover:bg-cream-100 text-brown-600 text-base font-semibold transition-colors"
+          >
+            Voir comment ça marche
+          </a>
         </div>
-      )}
 
-      {/* ── Segmented Control Mobile (< md) ── */}
-      <div className="md:hidden flex items-center bg-cream-200/80 p-1 rounded-xl border border-cream-300 mx-3 mt-1.5 mb-1 shrink-0">
-        <button
-          onClick={() => setMobileTab("studio")}
-          className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === "studio"
-              ? "bg-white text-brown-700 shadow-sm"
-              : "text-brown-400 hover:text-brown-600"
-          }`}
-        >
-          <MicIcon size={13} />
-          <span>Studio</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setMobileTab("chat");
-            setRightTab("chat");
-          }}
-          className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === "chat"
-              ? "bg-white text-brown-700 shadow-sm"
-              : "text-brown-400 hover:text-brown-600"
-          }`}
-        >
-          <MessageIcon size={13} />
-          <span>Discussion</span>
-          {(currentSession?.messages.length ?? 0) > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-cream-300 text-[10px] text-brown-700 font-bold">
-              {currentSession?.messages.length}
+        {/* Proof points */}
+        <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-brown-300 font-medium">
+          {[
+            "Aucune inscription requise",
+            "7 avatars 3D",
+            "12 voix naturelles",
+            "Corrections en français",
+          ].map((item) => (
+            <span key={item} className="flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-emerald-500">
+                <polyline points="2,7 5,10 12,3" />
+              </svg>
+              {item}
             </span>
-          )}
-        </button>
-
-        <button
-          onClick={() => {
-            setMobileTab("corrections");
-            setRightTab("corrections");
-          }}
-          className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === "corrections"
-              ? "bg-white text-brown-700 shadow-sm"
-              : "text-brown-400 hover:text-brown-600"
-          }`}
-        >
-          <PencilIcon size={13} />
-          <span>Fautes</span>
-          {allCorrections.length > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-terracotta-500 text-white text-[10px] font-bold">
-              {allCorrections.length}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* ── Bannière d'erreur ── */}
-      {displayError && (
-        <div className="px-3 sm:px-6 pt-2 shrink-0">
-          <ErrorBanner
-            message={displayError}
-            onDismiss={() => { setError(null); handleCancel(); }}
-          />
+          ))}
         </div>
-      )}
 
-      {/* ── Corps : Disposition Studio Visio 2-colonnes Responsive ── */}
-      <div className="flex-1 w-full max-w-[1600px] mx-auto p-2.5 sm:p-4 md:p-5 flex flex-col md:flex-row gap-3 md:gap-5 overflow-hidden min-h-0">
-        
-        {/* ── COLONNE GAUCHE : Studio Avatar & Dock Vocal (Visible sur desktop ou sur mobile en mode "studio") ── */}
-        <section
-          className={`${
-            mobileTab === "studio" ? "flex" : "hidden"
-          } md:flex flex-col w-full md:w-7/12 lg:w-3/5 h-full gap-2.5 sm:gap-3 overflow-hidden min-h-0`}
-          aria-label="Espace Tuteur"
-        >
-          {/* Cadre Studio Avatar */}
-          <div className="flex-1 min-h-0 relative rounded-2xl md:rounded-3xl border border-cream-300/80 shadow-lift overflow-hidden bg-gradient-to-b from-cream-50 via-cream-100 to-cream-200/90 flex flex-col">
-            {/* Halo de studio dynamique */}
-            <div
-              className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
-                micButtonState === "speaking" ? "studio-glow-active" : "studio-glow"
-              }`}
-            />
-
-            {/* Badges flottants dans la scène vidéo */}
-            <div className="absolute top-2.5 sm:top-3.5 left-3 sm:left-4 right-3 sm:right-4 z-10 flex items-center justify-between pointer-events-none">
-              {/* Bouton personnalisation avatar + nom */}
-              <button
-                onClick={() => setShowPersonalize(true)}
-                className="glass-pill px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold text-brown-600 flex items-center gap-1.5 sm:gap-2 shadow-subtle pointer-events-auto hover:bg-cream-100/90 transition-colors"
-                aria-label="Personnaliser l'avatar et la voix"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>{selectedAvatar.label}</span>
-                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
-                <span>{selectedVoice.label}</span>
-                <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="opacity-50">
-                  <path d="M9 2l1 1-7 7H2V9l7-7z"/>
-                </svg>
-              </button>
-
-              <div className="flex items-center gap-1.5 pointer-events-auto">
-                <span className="glass-pill px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-medium text-brown-400 capitalize">
-                  {level}
-                </span>
-                {topic && (
-                  <span className="glass-pill px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-medium text-terracotta-600 truncate max-w-[90px] sm:max-w-none">
-                    {topic}
-                  </span>
-                )}
+        {/* Aperçu UI stylisé */}
+        <div className="mt-14 max-w-4xl mx-auto">
+          <div className="relative rounded-2xl border border-cream-300 shadow-lift bg-cream-50 overflow-hidden">
+            {/* Fausse barre de navigation */}
+            <div className="bg-cream-100/80 border-b border-cream-200 px-4 py-2.5 flex items-center gap-2">
+              <div className="flex gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-300" />
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-300" />
+                <span className="w-2.5 h-2.5 rounded-full bg-green-300" />
               </div>
+              <div className="flex-1 mx-4 bg-cream-200 rounded-full h-5 max-w-xs" />
             </div>
 
-            {/* Notification de correction flottante sur mobile pour basculer facilement */}
-            {allCorrections.length > 0 && (
-              <button
-                onClick={() => {
-                  setMobileTab("corrections");
-                  setRightTab("corrections");
-                }}
-                className="md:hidden absolute bottom-3 left-3 z-10 glass-pill px-2.5 py-1 rounded-full text-[11px] font-semibold text-terracotta-600 border border-terracotta-200 shadow-sm flex items-center gap-1 animate-fade-in"
-              >
-                <PencilIcon size={12} />
-                <span>{allCorrections.length} faute{allCorrections.length > 1 ? "s" : ""}</span>
-              </button>
-            )}
-
-            {/* Canvas Avatar 3D */}
-            <div className="w-full h-full flex-1 relative">
-              <AvatarCanvas
-                ref={avatarRef}
-                className="w-full h-full"
-                subtitle={avatarSubtitle}
-                onSpeakStart={() => setMicButtonState("speaking")}
-                onSpeakEnd={() => setMicButtonState("idle")}
-                avatarUrl={selectedAvatar.url}
-                avatarBody={selectedAvatar.body}
-              />
-            </div>
-          </div>
-
-          {/* Dock Vocal Central */}
-          <div className="rounded-2xl border border-cream-200 bg-cream-50/90 backdrop-blur-md p-2.5 sm:p-3.5 shadow-sm shrink-0 flex flex-col items-center gap-2 sm:gap-2.5">
-            {/* Toast de prononciation si détecté */}
-            {pronunciationScore && pronunciationScore.issues.length > 0 && (
-              <div className="w-full max-w-md">
-                <PronunciationToast
-                  score={pronunciationScore}
-                  onDismiss={() => setPronunciationScore(null)}
-                />
-              </div>
-            )}
-
-            {/* Bouton micro avec halo */}
-            <div className="flex justify-center">
-              <MicButton
-                state={micButtonState}
-                onClick={handleMicClick}
-                onMouseDown={handleMicDown}
-                onMouseUp={handleMicUp}
-                onTouchStart={handleMicDown}
-                onTouchEnd={handleMicUp}
-                disabled={micButtonState === "processing" || micButtonState === "speaking"}
-              />
-            </div>
-
-            {/* Champ de saisie texte moderne */}
-            <div className="w-full max-w-lg">
-              <TextInput
-                onSend={handleUserMessage}
-                disabled={micButtonState !== "idle"}
-                placeholder="Ou écrivez votre message en anglais…"
-              />
-            </div>
-
-            {/* Bouton Personnaliser + raccourcis modes */}
-            <div className="w-full flex items-center justify-between gap-2 flex-wrap">
-              <button
-                onClick={() => setShowPersonalize(true)}
-                disabled={micButtonState === "processing" || micButtonState === "speaking"}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brown-500 bg-cream-100/80 border border-cream-300 hover:bg-cream-200 hover:text-brown-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                aria-label="Personnaliser l'avatar et la voix"
-              >
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <span>{selectedAvatar.label}</span>
-                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
-                <span>{selectedVoice.label}</span>
-              </button>
-
-              {/* Raccourcis accès modes */}
-              <div className="flex items-center gap-1">
-                {(
-                  [
-                    { mode: "repeat-after-me" as AppMode, Icon: RepeatIcon, label: "Répète après moi" },
-                    { mode: "dictation" as AppMode, Icon: HeadphonesIcon, label: "Dictée" },
-                    { mode: "text-correction" as AppMode, Icon: FileEditIcon, label: "Corriger texte" },
-                    { mode: "lesson" as AppMode, Icon: GraduationIcon, label: "Leçons" },
-                  ] as const
-                ).map(({ mode, Icon, label }) => (
-                  <button
-                    key={mode}
-                    onClick={() => openMode(mode)}
-                    title={label}
-                    aria-label={label}
-                    className="p-1.5 rounded-lg bg-cream-100 hover:bg-terracotta-50 border border-cream-200 hover:border-terracotta-200 text-brown-400 hover:text-terracotta-500 transition-colors"
-                  >
-                    <Icon size={14} />
-                  </button>
-                ))}
-                {dueCards.length > 0 && (
-                  <button
-                    onClick={() => setIsSRSOpen(true)}
-                    title={`${dueCards.length} carte${dueCards.length > 1 ? "s" : ""} à réviser`}
-                    aria-label="Révision espacée"
-                    className="p-1.5 rounded-lg bg-terracotta-50 hover:bg-terracotta-100 border border-terracotta-200 text-terracotta-500 hover:text-terracotta-600 transition-colors relative"
-                  >
-                    <CardsIcon size={14} />
-                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-terracotta-500 text-white text-[8px] font-bold flex items-center justify-center">
-                      {dueCards.length > 9 ? "9+" : dueCards.length}
-                    </span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── COLONNE DROITE : Hub Interactif (Visible sur desktop ou sur mobile en mode "chat"/"corrections") ── */}
-        <section
-          className={`${
-            mobileTab !== "studio" ? "flex" : "hidden"
-          } md:flex flex-col w-full md:w-5/12 lg:w-2/5 h-full rounded-2xl md:rounded-3xl border border-cream-200 bg-cream-50/95 shadow-sm overflow-hidden min-h-0`}
-          aria-label="Fil de discussion et corrections"
-        >
-          {/* Header des onglets */}
-          <div className="flex items-center border-b border-cream-200 bg-cream-100/60 p-1.5 shrink-0">
-            <button
-              onClick={() => {
-                setRightTab("chat");
-                setMobileTab("chat");
-              }}
-              className={`flex-1 py-1.5 sm:py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all ${
-                rightTab === "chat"
-                  ? "bg-white text-brown-700 shadow-sm"
-                  : "text-brown-400 hover:text-brown-600 hover:bg-cream-200/50"
-              }`}
-            >
-              <MessageIcon size={14} />
-              <span>Discussion</span>
-              {(currentSession?.messages.length ?? 0) > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-cream-200 text-[10px] text-brown-500 font-bold">
-                  {currentSession?.messages.length}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => {
-                setRightTab("corrections");
-                setMobileTab("corrections");
-              }}
-              className={`flex-1 py-1.5 sm:py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all ${
-                rightTab === "corrections"
-                  ? "bg-white text-brown-700 shadow-sm"
-                  : "text-brown-400 hover:text-brown-600 hover:bg-cream-200/50"
-              }`}
-            >
-              <PencilIcon size={14} />
-              <span>Corrections</span>
-              {allCorrections.length > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full bg-terracotta-500 text-cream-50 text-[10px] font-bold animate-pulse">
-                  {allCorrections.length}
-                </span>
-              )}
-            </button>
-          </div>
-
-          {/* Contenu de l'onglet Discussion */}
-          {rightTab === "chat" ? (
-            <div className="flex-1 overflow-hidden flex flex-col min-h-0">
-              <ConversationView
-                messages={currentSession?.messages ?? []}
-                onReplay={(url) => new Audio(url).play().catch(() => {})}
-                isTyping={isTyping}
-              />
-
-              {/* Barre de saisie et micro d'appoint pour mobile dans le chat */}
-              <div className="md:hidden shrink-0 border-t border-cream-200 bg-cream-50 p-2 flex items-center gap-2">
-                <button
-                  onClick={handleMicClick}
-                  disabled={micButtonState === "processing" || micButtonState === "speaking"}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shrink-0 ${
-                    micButtonState === "recording"
-                      ? "bg-terracotta-500 text-white animate-pulse"
-                      : "bg-cream-100 text-brown-400 hover:bg-cream-200 border border-cream-300"
-                  }`}
-                  aria-label="Microphone"
-                >
-                  <MicIcon size={16} />
-                </button>
-                <div className="flex-1">
-                  <TextInput
-                    onSend={handleUserMessage}
-                    disabled={micButtonState !== "idle"}
-                    placeholder="Écrivez en anglais…"
-                  />
+            {/* Contenu mock de l'app */}
+            <div className="flex divide-x divide-cream-200 min-h-[280px]">
+              {/* Colonne gauche — avatar */}
+              <div className="w-3/5 bg-gradient-to-b from-cream-100 to-cream-200/80 flex flex-col items-center justify-center gap-4 py-10 px-6">
+                <div className="w-32 h-40 sm:w-40 sm:h-52 rounded-2xl bg-gradient-to-b from-terracotta-100 to-terracotta-200/60 border border-terracotta-200 flex items-end justify-center overflow-hidden shadow-card">
+                  <svg width="80" height="112" viewBox="0 0 80 112" fill="none" aria-hidden="true">
+                    <ellipse cx="40" cy="32" rx="22" ry="26" fill="#c4512e" opacity="0.4" />
+                    <path d="M10 112 C10 76 20 66 40 62 C60 66 70 76 70 112" fill="#c4512e" opacity="0.35" />
+                  </svg>
+                </div>
+                <div className="bg-white/80 rounded-full px-4 py-1.5 border border-cream-200 text-xs text-brown-500 font-medium">
+                  Sarah · Thalia · Intermédiaire
+                </div>
+                {/* Faux mic button */}
+                <div className="w-12 h-12 rounded-full bg-terracotta-500 shadow-mic flex items-center justify-center">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" x2="12" y1="19" y2="22" />
+                  </svg>
                 </div>
               </div>
-            </div>
-          ) : (
-            /* Contenu de l'onglet Corrections */
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 min-h-0">
-              {allCorrections.length > 0 && (
-                <div className="bg-gradient-to-br from-terracotta-50 to-cream-100 p-3 sm:p-3.5 rounded-xl border border-terracotta-200 flex items-center justify-between gap-3 mb-2">
-                  <div>
-                    <p className="text-xs font-semibold text-terracotta-700">
-                      {allCorrections.length} point{allCorrections.length > 1 ? "s" : ""} corrigé{allCorrections.length > 1 ? "s" : ""}
-                    </p>
-                    <p className="text-[11px] text-brown-300">
-                      Révisez-les sous forme de Flashcards pour les mémoriser.
-                    </p>
+
+              {/* Colonne droite — conversation */}
+              <div className="flex-1 flex flex-col gap-3 p-4 justify-center">
+                {/* Message utilisateur */}
+                <div className="flex justify-end">
+                  <div className="bg-terracotta-500 text-white text-xs rounded-2xl rounded-br-sm px-3 py-2 max-w-[85%] shadow-sm">
+                    Yesterday I go to the museum, it was amazing!
                   </div>
-                  <button
-                    onClick={() => setIsFlashcardsOpen(true)}
-                    className="btn-primary text-xs py-1.5 px-3 shrink-0 shadow-sm flex items-center gap-1.5"
-                  >
-                    <CardsIcon size={13} />
-                    <span>Réviser</span>
-                  </button>
                 </div>
-              )}
-
-              {allCorrections.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full py-16 text-center px-4">
-                  <div className="w-12 h-12 rounded-full bg-cream-100 border border-cream-200 flex items-center justify-center mb-3 text-brown-300">
-                    <CheckIcon size={20} className="text-emerald-500" />
+                {/* Correction */}
+                <div className="bg-cream-100 border border-cream-200 rounded-lg px-2.5 py-2 text-[10px]">
+                  <span className="text-blue-600 font-semibold">Grammaire ·</span>
+                  <span className="text-brown-400 ml-1 line-through">go</span>
+                  <span className="text-brown-600 font-medium ml-1">went</span>
+                  <p className="text-brown-300 mt-0.5">Passé simple irrégulier de "go"</p>
+                </div>
+                {/* Message avatar */}
+                <div className="flex items-end gap-2">
+                  <div className="w-5 h-5 rounded-full bg-terracotta-400 text-white text-[8px] font-bold flex items-center justify-center shrink-0">AI</div>
+                  <div className="bg-white border border-cream-200 text-brown-600 text-xs rounded-2xl rounded-bl-sm px-3 py-2 max-w-[85%] shadow-subtle leading-relaxed">
+                    That sounds wonderful! Which part did you enjoy the most?
                   </div>
-                  <p className="text-sm font-medium text-brown-600">Aucune erreur pour l'instant</p>
-                  <p className="text-xs text-brown-300 mt-1 max-w-xs">
-                    Continuez à vous exprimer à l'oral ou à l'écrit. Sarah vous aidera à peaufiner vos tournures au fil de l'échange.
-                  </p>
                 </div>
-              ) : (
-                allCorrections
-                  .slice()
-                  .reverse()
-                  .map((c, i) => (
-                    <CorrectionCard
-                      key={`${c.original}-${i}`}
-                      correction={c}
-                      index={allCorrections.length - 1 - i}
-                    />
-                  ))
-              )}
+              </div>
             </div>
-          )}
-        </section>
+          </div>
+        </div>
       </div>
-
-      {/* Modale Flashcards si ouverte depuis l'onglet corrections */}
-      <FlashcardModal
-        isOpen={isFlashcardsOpen}
-        onClose={() => setIsFlashcardsOpen(false)}
-        corrections={allCorrections}
-        title="Révision de la séance en cours"
-      />
-
-      {/* Modale SRS — Répétition espacée */}
-      <SRSFlashcardModal
-        isOpen={isSRSOpen}
-        onClose={() => setIsSRSOpen(false)}
-        cards={srsCards}
-        dueCards={dueCards}
-        onGrade={reviewCard}
-        title="Révision espacée"
-      />
-
-      {/* Modale des modes spéciaux */}
-      <ModeModal
-        mode={activeMode}
-        isOpen={isModeModalOpen}
-        onClose={() => setIsModeModalOpen(false)}
-        level={level}
-        topic={topic || undefined}
-        voice={selectedVoice}
-        onCorrectionsFound={handleTextCorrections}
-        onStartConversation={(prompt) => {
-          setIsModeModalOpen(false);
-          handleUserMessage(prompt);
-        }}
-      />
-
-      {/* Modale de personnalisation avatar + voix */}
-      {showPersonalize && (
-        <AvatarVoiceSelector
-          avatarId={selectedAvatar.id}
-          voiceId={selectedVoice.id}
-          onAvatarChange={(avatar: AvatarConfig) => {
-            setSelectedAvatar(avatar);
-            setShowPersonalize(false);
-          }}
-          onVoiceChange={(voice: VoiceConfig) => {
-            setSelectedVoice(voice);
-          }}
-          onClose={() => setShowPersonalize(false)}
-          disabled={micButtonState !== "idle"}
-        />
-      )}
-    </div>
+    </section>
   );
 }
 
+function Features() {
+  return (
+    <section id="features" className="py-20 sm:py-24 bg-white/60">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
+            Tout ce qu'il faut pour progresser vraiment
+          </h2>
+          <p className="mt-4 text-brown-400 max-w-xl mx-auto text-lg">
+            Une expérience d'apprentissage complète, pas juste un chatbot.
+          </p>
+        </div>
 
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {FEATURES.map((f) => (
+            <article
+              key={f.title}
+              className="bg-cream-50 border border-cream-200 rounded-2xl p-6 hover:border-terracotta-200 hover:shadow-card transition-all group"
+            >
+              <div className="w-11 h-11 rounded-xl bg-terracotta-50 border border-terracotta-100 text-terracotta-500 flex items-center justify-center mb-4 group-hover:bg-terracotta-100 transition-colors">
+                {f.icon}
+              </div>
+              <h3 className="font-bold text-brown-700 mb-2">{f.title}</h3>
+              <p className="text-sm text-brown-400 leading-relaxed">{f.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  return (
+    <section id="how-it-works" className="py-20 sm:py-24">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
+            En pratique, c'est simple
+          </h2>
+          <p className="mt-4 text-brown-400 text-lg">
+            Pas de compte, pas d'installation. Juste de la pratique.
+          </p>
+        </div>
+
+        <div className="relative">
+          {/* Ligne verticale connectant les étapes */}
+          <div className="absolute left-6 sm:left-1/2 top-10 bottom-10 w-px bg-cream-300 -translate-x-px hidden sm:block" aria-hidden />
+
+          <div className="space-y-10">
+            {HOW_IT_WORKS.map((step, i) => (
+              <div
+                key={step.step}
+                className={`relative flex flex-col sm:flex-row gap-6 items-start sm:items-center ${i % 2 === 1 ? "sm:flex-row-reverse" : ""
+                  }`}
+              >
+                {/* Numéro */}
+                <div className="shrink-0 sm:w-1/2 flex justify-start sm:justify-end">
+                  <div className={`flex items-center gap-4 ${i % 2 === 1 ? "sm:flex-row-reverse" : ""}`}>
+                    <div className="w-12 h-12 rounded-full bg-terracotta-500 text-white font-extrabold text-lg flex items-center justify-center shadow-mic shrink-0 relative z-10">
+                      {step.step.slice(-1)}
+                    </div>
+                    <div className={`sm:hidden lg:block ${i % 2 === 1 ? "sm:text-right" : ""}`}>
+                      <p className="text-[11px] text-terracotta-500 font-bold uppercase tracking-widest">
+                        Étape {step.step}
+                      </p>
+                      <h3 className="font-bold text-brown-700 text-lg mt-0.5">{step.title}</h3>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contenu */}
+                <div className="sm:w-1/2">
+                  <div className="hidden sm:block lg:hidden mb-2">
+                    <p className="text-[11px] text-terracotta-500 font-bold uppercase tracking-widest">
+                      Étape {step.step}
+                    </p>
+                    <h3 className="font-bold text-brown-700 text-lg">{step.title}</h3>
+                  </div>
+                  <p className="text-brown-400 leading-relaxed">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-center mt-14">
+          <Link
+            href="/app"
+            className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-base transition-all shadow-lift active:scale-95"
+          >
+            Essayer maintenant
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <path d="M2 8h12M8 2l6 6-6 6" />
+            </svg>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Levels() {
+  return (
+    <section className="py-20 sm:py-24 bg-white/60">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
+            Adapté à votre niveau
+          </h2>
+          <p className="mt-4 text-brown-400 text-lg max-w-xl mx-auto">
+            L'IA ajuste automatiquement sa complexité à chaque échange. Vous pouvez aussi choisir vous-même.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-6">
+          {LEVELS.map((lvl) => (
+            <div key={lvl.label} className={`rounded-2xl border-2 p-6 ${lvl.color}`}>
+              <div className="flex items-center gap-2 mb-3">
+                <span className={`w-2.5 h-2.5 rounded-full ${lvl.dot}`} aria-hidden />
+                <span className="font-extrabold text-lg">{lvl.label}</span>
+              </div>
+              <p className="text-sm leading-relaxed mb-4 opacity-80">{lvl.description}</p>
+              <ul className="space-y-1.5">
+                {lvl.examples.map((ex) => (
+                  <li key={ex} className="flex items-center gap-2 text-sm opacity-90 font-medium">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                      <polyline points="2,6 4.5,8.5 10,3" />
+                    </svg>
+                    {ex}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Faq() {
+  return (
+    <section id="faq" className="py-20 sm:py-24">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-extrabold text-brown-700 tracking-tight">
+            Questions fréquentes
+          </h2>
+        </div>
+        <dl className="space-y-4">
+          {FAQ.map((item) => (
+            <div key={item.q} className="bg-cream-50 border border-cream-200 rounded-xl p-5">
+              <dt className="font-bold text-brown-700 mb-2 flex items-start gap-2">
+                <span className="text-terracotta-500 shrink-0 mt-0.5">Q.</span>
+                {item.q}
+              </dt>
+              <dd className="text-sm text-brown-400 leading-relaxed pl-5">{item.a}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
+function CtaBanner() {
+  return (
+    <section className="py-16 sm:py-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="bg-gradient-to-br from-terracotta-500 to-terracotta-600 rounded-3xl p-8 sm:p-12 text-center text-white shadow-lift relative overflow-hidden">
+          {/* Fond décoratif */}
+          <div className="absolute inset-0 pointer-events-none" aria-hidden>
+            <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
+          </div>
+
+          <div className="relative">
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+              Prêt à parler anglais
+              <br />
+              avec confiance ?
+            </h2>
+            <p className="mt-4 text-white/80 text-lg max-w-md mx-auto">
+              Lancez votre première conversation maintenant. Aucun compte, aucune carte bancaire.
+            </p>
+            <Link
+              href="/app"
+              className="mt-8 inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-white text-terracotta-600 font-extrabold text-base hover:bg-cream-50 transition-all shadow-lg active:scale-95"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+              </svg>
+              Commencer gratuitement
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-cream-200 bg-cream-50/80 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-brown-300">
+        <div className="flex items-center gap-2">
+          <Logo size={24} />
+          <span className="font-semibold text-brown-500">English Tutor AI</span>
+        </div>
+
+        <nav className="flex items-center gap-5">
+          <Link href="/app" className="hover:text-brown-600 transition-colors">Application</Link>
+          <Link href="/session" className="hover:text-brown-600 transition-colors">Bilans</Link>
+          <a href="#faq" className="hover:text-brown-600 transition-colors">FAQ</a>
+        </nav>
+
+        <p className="text-brown-200 text-xs">
+          Propulsé par OpenRouter · IA conversationnelle
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+// ─── Page principale ──────────────────────────────────────────────────────────
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-dvh bg-cream-100">
+      <NavBar />
+      <main>
+        <Hero />
+        <Features />
+        <HowItWorks />
+        <Levels />
+        <Faq />
+        <CtaBanner />
+      </main>
+      <Footer />
+    </div>
+  );
+}

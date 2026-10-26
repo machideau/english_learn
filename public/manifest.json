@@ -1,0 +1,55 @@
+{
+  "name": "English Tutor AI",
+  "short_name": "EnglishAI",
+  "description": "Pratiquez l'anglais oral avec un tuteur IA et un avatar 3D.",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#faf2e8",
+  "theme_color": "#c4512e",
+  "orientation": "portrait-primary",
+  "categories": ["education", "productivity"],
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "English Tutor AI — Studio de conversation"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouvelle conversation",
+      "short_name": "Parler",
+      "url": "/app",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mes bilans",
+      "short_name": "Bilans",
+      "url": "/session",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

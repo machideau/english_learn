@@ -3,6 +3,7 @@ import { useState, useRef, useCallback } from "react";
 import type { ChatMessage } from "@/types";
 import { CorrectionCard } from "@/components/corrections/CorrectionCard";
 import { SpeakerIcon, SpinnerIcon } from "@/components/ui/Icons";
+import { PhoneticWordBubble } from "@/components/pronunciation/PhoneticWordBubble";
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -76,7 +77,11 @@ export function MessageBubble({ message, onReplay }: MessageBubbleProps) {
               : "bg-white border border-cream-200/90 text-brown-700 rounded-2xl rounded-bl-sm shadow-subtle",
           ].join(" ")}
         >
-          <p className="whitespace-pre-wrap">{message.content}</p>
+          <PhoneticWordBubble
+            text={message.content}
+            analyzedWords={message.analyzedWords}
+            isUser={isUser}
+          />
 
           {/* Réécouter l'assistant */}
           {!isUser && message.audioUrl && (

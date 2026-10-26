@@ -7,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "og": "node scripts/generate-og-image.mjs",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@types/uuid": "^10.0.0",

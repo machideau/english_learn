@@ -222,3 +222,46 @@ export const UndoIcon = icon(
   '<path d="M3 13C6 8 11 7 15 10l4 3"/>'
 );
 
+// Masque de théâtre / Roleplay
+export const MaskIcon = icon(
+  '<path d="M2 9a7 7 0 0 1 16 0c0 4.5-3.5 8-8 8s-8-3.5-8-8z"/>' +
+  '<path d="M6 8a1.5 1.5 0 1 0 0 .01"/>' +
+  '<path d="M14 8a1.5 1.5 0 1 0 0 .01"/>' +
+  '<path d="M7 13c1.5 1 4.5 1 6 0"/>'
+);
+
+// Boussole / Roadmap
+export const CompassIcon = icon(
+  '<circle cx="10" cy="10" r="8"/>' +
+  '<polygon points="13.5 6.5 11.5 11.5 6.5 13.5 8.5 8.5 13.5 6.5" fill="currentColor" fillOpacity="0.2"/>'
+);
+
+// Trophée / Placement Test & Succès
+export const TrophyIcon = icon(
+  '<path d="M5 4h10v5a5 5 0 0 1-10 0V4z"/>' +
+  '<path d="M5 6H2a2 2 0 0 0 0 4h3"/>' +
+  '<path d="M15 6h3a2 2 0 0 1 0 4h-3"/>' +
+  '<path d="M10 14v3"/>' +
+  '<path d="M7 17h6"/>'
+);
+
+// Partage / Share
+export const ShareIcon = icon(
+  '<circle cx="15" cy="5" r="2.5"/>' +
+  '<circle cx="5" cy="10" r="2.5"/>' +
+  '<circle cx="15" cy="15" r="2.5"/>' +
+  '<line x1="7.2" y1="8.9" x2="12.8" y2="6.1"/>' +
+  '<line x1="7.2" y1="11.1" x2="12.8" y2="13.9"/>'
+);
+
+// Smartphone / PWA
+export const SmartphoneIcon = icon(
+  '<rect x="5" y="2" width="10" height="16" rx="2"/>' +
+  '<line x1="9" y1="15" x2="11" y2="15"/>'
+);
+
+// Étoile brillante / Sparkle
+export const SparkleIcon = icon(
+  '<path d="M10 2l1.8 5.2L17 9l-5.2 1.8L10 16l-1.8-5.2L3 9l5.2-1.8z" fill="currentColor" fillOpacity="0.2"/>'
+);
+

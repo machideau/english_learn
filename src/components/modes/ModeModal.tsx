@@ -25,7 +25,7 @@ interface ModeModalProps {
 }
 
 const MODE_META: Record<
-  Exclude<AppMode, "conversation">,
+  Exclude<AppMode, "conversation" | "roleplay" | "placement-test">,
   { title: string; description: string; Icon: React.FC<{ size?: number; className?: string }> }
 > = {
   "repeat-after-me": {
@@ -60,7 +60,9 @@ export function ModeModal({
   onCorrectionsFound,
   onStartConversation,
 }: ModeModalProps) {
-  if (!isOpen || mode === "conversation") return null;
+  if (!isOpen || mode === "conversation" || mode === "roleplay" || mode === "placement-test") {
+    return null;
+  }
 
   const meta = MODE_META[mode];
   const Icon = meta.Icon;

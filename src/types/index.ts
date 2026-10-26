@@ -12,13 +12,19 @@ export interface Correction {
   explication_fr: string;
 }
 
+export * from "./roleplay";
+export * from "./placement";
+export * from "./pronunciation-words";
+
 // ─── Mode applicatif ─────────────────────────────────────────────────────────
 export type AppMode =
   | "conversation"      // mode par défaut
   | "repeat-after-me"   // l'avatar dit une phrase, l'user répète
   | "dictation"         // l'avatar dit une phrase, l'user la tape
   | "text-correction"   // l'user colle un texte, l'IA corrige
-  | "lesson";           // module de leçon structurée
+  | "lesson"            // module de leçon structurée
+  | "roleplay"          // jeu de rôle immersif avec objectifs
+  | "placement-test";   // test de positionnement CEFR initial
 
 // ─── Leçons structurées ──────────────────────────────────────────────────────
 export type LessonCategory =
@@ -74,6 +80,7 @@ export interface ChatMessage {
   timestamp: number;
   corrections?: Correction[];
   audioUrl?: string;
+  analyzedWords?: import("./pronunciation-words").AnalyzedWord[];
 }
 
 export interface ChatApiRequest {
@@ -82,12 +89,22 @@ export interface ChatApiRequest {
   level: Level;
   interfaceLanguage: InterfaceLanguage;
   topic?: string;
+  roleplay?: {
+    scenarioId: string;
+    scenarioTitle: string;
+    avatarRole: string;
+    userRole: string;
+    context: string;
+    objectives: Array<{ id: string; label: string }>;
+  };
 }
 
 export interface ChatApiResponse {
   reply: string;
   corrections: Correction[];
   niveau_estime: Level;
+  completedObjectiveIds?: string[];
+  analyzedWords?: import("./pronunciation-words").AnalyzedWord[];
 }
 
 export interface TranscribeApiRequest {

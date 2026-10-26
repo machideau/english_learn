@@ -77,6 +77,9 @@ const config: Config = {
       letterSpacing: {
         widest: "0.12em",
       },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
     },
   },
   plugins: [],

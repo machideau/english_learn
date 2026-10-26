@@ -280,3 +280,13 @@ p, span, div, button, input, textarea, select, label, time {
   body { background: white; color: black; }
   .no-print { display: none !important; }
 }
+
+/* ── Landing page ────────────────────────────────────────────────────────────── */
+.bg-gradient-radial {
+  background-image: radial-gradient(var(--tw-gradient-stops));
+}
+
+/* Smooth scroll pour les ancres */
+html {
+  scroll-behavior: smooth;
+}
