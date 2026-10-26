@@ -278,7 +278,7 @@ export function SRSFlashcardModal({
                       </div>
                       {currentCard && currentCard.reviewCount > 0 && (
                         <p className="text-[10px] text-brown-200">
-                          Révision #{currentCard.reviewCount} — Intervalle actuel : {currentCard.interval} jour{currentCard.interval > 1 ? "s" : ""}
+                          Révision #{currentCard.reviewCount} - Intervalle actuel : {currentCard.interval} jour{currentCard.interval > 1 ? "s" : ""}
                         </p>
                       )}
                     </div>

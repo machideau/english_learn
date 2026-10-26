@@ -461,7 +461,7 @@ export default function SessionPage() {
                     {dueCards.length} carte{dueCards.length > 1 ? "s" : ""} à réviser aujourd'hui
                   </p>
                   <p className="text-xs text-brown-300 mt-0.5">
-                    Répétition espacée — vos erreurs passées
+                    Répétition espacée - vos erreurs passées
                   </p>
                 </div>
                 <button

@@ -4,7 +4,7 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
   {
     id: "q1-a1",
     targetLevel: "A1",
-    title: "Question 1/4 — Présentation personnelle",
+    title: "Question 1/4 - Présentation personnelle",
     promptFr: "Présentez-vous en anglais (votre prénom, votre ville, ce que vous aimez faire le week-end).",
     promptEn: "Hello! Could you introduce yourself? What is your name, where do you live, and what do you like to do on weekends?",
     expectedKeywords: ["name", "live", "like", "love", "work", "weekend"],
@@ -13,7 +13,7 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
   {
     id: "q2-b1",
     targetLevel: "B1",
-    title: "Question 2/4 — Raconter une expérience",
+    title: "Question 2/4 - Raconter une expérience",
     promptFr: "Racontez vos dernières vacances ou un voyage marquant que vous avez fait.",
     promptEn: "Tell me about your last vacation or a memorable trip you took. What did you do and what was special about it?",
     expectedKeywords: ["went", "travel", "because", "visited", "enjoyed", "food", "people", "hotel"],
@@ -22,7 +22,7 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
   {
     id: "q3-b2",
     targetLevel: "B2",
-    title: "Question 3/4 — Exprimer une opinion argumentée",
+    title: "Question 3/4 - Exprimer une opinion argumentée",
     promptFr: "Que pensez-vous du télétravail par rapport au travail au bureau ? Donnez au moins un avantage et un inconvénient.",
     promptEn: "In your opinion, is working remotely better than working in an office? Could you share some pros and cons?",
     expectedKeywords: ["opinion", "advantage", "disadvantage", "however", "flexibility", "productivity", "colleagues"],
@@ -31,7 +31,7 @@ export const PLACEMENT_QUESTIONS: PlacementQuestion[] = [
   {
     id: "q4-c1",
     targetLevel: "C1",
-    title: "Question 4/4 — Raisonnement abstrait & nuance",
+    title: "Question 4/4 - Raisonnement abstrait & nuance",
     promptFr: "Si vous deviez réformer un aspect du système éducatif actuel avec l'avènement de l'IA, que changeriez-vous et pourquoi ?",
     promptEn: "With the rapid rise of Artificial Intelligence, how do you think education should evolve to prepare future generations?",
     expectedKeywords: ["critical", "thinking", "adapt", "curriculum", "creativity", "ethical", "furthermore", "perspective"],

@@ -25,7 +25,7 @@ function formatSessionForExport(session: ConversationSession): string {
   const durationMin = Math.round(durationMs / 60000);
   const userMessages = session.messages.filter((m) => m.role === "user").length;
 
-  let output = `ENGLISH TUTOR — SESSION DU ${date.toUpperCase()}\n`;
+  let output = `ENGLISH TUTOR - SESSION DU ${date.toUpperCase()}\n`;
   output += "═".repeat(60) + "\n\n";
   output += `Niveau   : ${session.level}\n`;
   if (session.topic) output += `Thème    : ${session.topic}\n`;
@@ -82,7 +82,7 @@ export function ExportButton({
   const handleExport = useCallback(() => {
     if (sessions && sessions.length > 0) {
       // Export de toutes les sessions
-      let content = "ENGLISH TUTOR — EXPORT COMPLET\n";
+      let content = "ENGLISH TUTOR - EXPORT COMPLET\n";
       content += "═".repeat(60) + "\n";
       content += `Exporté le ${new Date().toLocaleDateString("fr-FR")}\n`;
       content += `${sessions.length} session(s)\n\n`;

@@ -72,7 +72,7 @@ export function useStreak() {
       let newStreak = prev.currentStreak;
 
       if (prev.lastActiveDate === today) {
-        // Déjà actif aujourd'hui — on ne change pas le streak
+        // Déjà actif aujourd'hui - on ne change pas le streak
         newStreak = prev.currentStreak;
       } else if (prev.lastActiveDate === yesterday) {
         // Actif hier : on incrémente

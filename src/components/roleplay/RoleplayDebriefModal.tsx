@@ -64,7 +64,7 @@ export function RoleplayDebriefModal({
             {isSuccess ? "Mission Accomplie !" : "Débriefing du Scénario"}
           </h2>
           <p className="text-xs text-white/80 mt-1">
-            {scenario.title} — {scenario.avatarName}
+            {scenario.title} - {scenario.avatarName}
           </p>
 
           {/* Score Cercle / Pill */}

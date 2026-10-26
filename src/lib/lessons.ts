@@ -109,7 +109,7 @@ export const LESSONS: Lesson[] = [
         id: "pt1",
         type: "repeat",
         instruction: "Écoutez la différence",
-        prompt: "I lived in Paris. — I have lived in Paris.",
+        prompt: "I lived in Paris. - I have lived in Paris.",
         audioText: "I lived in Paris. I have lived in Paris.",
       },
       {
@@ -211,7 +211,7 @@ export const LESSONS: Lesson[] = [
       {
         id: "c2",
         type: "fill-blank",
-        instruction: "3rd conditional — complétez",
+        instruction: "3rd conditional - complétez",
         prompt: "If she ___ (study) harder, she ___ (pass) the exam.",
         answer: "had studied / would have passed",
         hint: "if + past perfect → would have + past participle",
@@ -258,7 +258,7 @@ export const LESSONS: Lesson[] = [
         id: "i2",
         type: "fill-blank",
         instruction: "Complétez l'idiome",
-        prompt: "She has a lot on her ___ right now — work, family, everything.",
+        prompt: "She has a lot on her ___ right now - work, family, everything.",
         answer: "plate",
         hint: "'have a lot on one's plate' = être débordé",
       },

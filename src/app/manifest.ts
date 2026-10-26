@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "English Tutor AI — Parlez anglais avec un avatar 3D",
+    name: "English Tutor AI - Parlez anglais avec un avatar 3D",
     short_name: "English AI",
     description: "Pratiquez l'anglais oral avec un tuteur IA 3D, corrections en temps réel, scénarios immersifs et flashcards.",
     start_url: "/app",

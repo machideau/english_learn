@@ -4,7 +4,7 @@ interface LogoProps {
 }
 
 /**
- * Logo English Tutor AI — micro avec ondes sonores et étoile.
+ * Logo English Tutor AI - micro avec ondes sonores et étoile.
  * Identique à /public/icon.svg mais en composant React inline
  * pour éviter un chargement réseau supplémentaire.
  */

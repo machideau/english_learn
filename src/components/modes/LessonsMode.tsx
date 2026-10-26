@@ -190,7 +190,7 @@ function ExerciseView({
 
   const checkAnswer = () => {
     if (!exercise.answer) {
-      onAnswer(true); // conversation exercises — always proceed
+      onAnswer(true); // conversation exercises - always proceed
       return;
     }
     const normalize = (s: string) =>

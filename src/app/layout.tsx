@@ -149,20 +149,20 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Parlez anglais avec un avatar 3D`,
+    title: `${SITE_NAME} - Parlez anglais avec un avatar 3D`,
     description: SITE_DESCRIPTION,
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "English Tutor AI — Tuteur IA avec avatar 3D",
+        alt: "English Tutor AI - Tuteur IA avec avatar 3D",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Parlez anglais avec un avatar 3D`,
+    title: `${SITE_NAME} - Parlez anglais avec un avatar 3D`,
     description: SITE_DESCRIPTION,
     images: ["/og-image.png"],
   },

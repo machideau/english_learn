@@ -3,40 +3,158 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 
 export const metadata: Metadata = {
-  title: "English Tutor AI — Pratiquez l'anglais à l'oral avec un avatar 3D",
+  title: "English Tutor AI - Pratiquez l'anglais à l'oral avec un avatar 3D",
   description:
     "Apprenez l'anglais oral gratuitement avec un tuteur IA et un avatar 3D. Corrections en temps réel, prononciation, flashcards et leçons structurées. Adapté à tous les niveaux.",
   keywords: [
+    // Apprentissage oral - mots-clés principaux
     "apprendre anglais",
     "apprendre anglais oral",
+    "apprendre l'anglais gratuitement",
     "pratiquer anglais oral",
     "parler anglais couramment",
-    "tuteur anglais IA",
+    "parler anglais sans accent",
+    "débloquer son anglais",
+    "cours anglais oral gratuit",
+    "cours anglais en ligne gratuit",
+    "cours anglais en ligne",
     "conversation anglais",
-    "conversation anglais IA",
+    "conversation anglais en ligne",
+    "conversation anglais gratuit",
+    "dialogue anglais",
+    "exercices anglais oral",
+    "améliorer son anglais oral",
+    "anglais oral facile",
+    "anglais pour francophones",
+    "méthode pour parler anglais",
+    "s'entraîner à parler anglais",
+    "anglais pratique quotidien",
+    "pratiquer anglais tous les jours",
+
+    // IA & Avatar
+    "tuteur anglais IA",
+    "professeur anglais IA",
+    "intelligence artificielle pour apprendre l'anglais",
+    "apprendre anglais avec IA",
     "avatar 3D anglais",
-    "correction prononciation anglais",
-    "phonétique anglais",
-    "simulation entretien anglais",
+    "avatar lip sync anglais",
+    "parler avec une IA en anglais",
+    "conversation avec tuteur IA",
+    "AI english tutor",
+    "AI language tutor",
+    "chatgpt apprendre anglais",
+    "tuteur virtuel anglais",
+    "compagnon virtuel anglais",
+    "reconnaissance vocale anglais",
+    "synthèse vocale anglais",
+    "conversational AI english",
+    "english AI conversation partner",
+    "AI speaking practice english",
+
+    // Niveaux CEFR
     "test de niveau anglais",
     "test niveau anglais gratuit",
+    "test CEFR anglais",
+    "test de positionnement anglais",
+    "évaluation niveau anglais oral",
+    "anglais niveau A1",
+    "anglais niveau A2",
+    "anglais niveau B1",
+    "anglais niveau B2",
+    "anglais niveau C1",
     "anglais A1 A2 B1 B2 C1",
     "anglais débutant",
     "anglais intermédiaire",
+    "anglais avancé",
+    "parcours apprentissage anglais",
+    "roadmap apprentissage anglais",
+    "objectifs apprentissage anglais",
+
+    // Prononciation & phonétique
+    "prononciation anglais",
+    "correction prononciation anglais",
+    "phonétique anglais",
+    "alphabet phonétique anglais IPA",
+    "comment prononcer en anglais",
+    "accent tonique anglais",
+    "prononcer le th en anglais",
+    "prononcer comme un natif anglais",
+    "analyse phonétique anglais mot à mot",
+    "elsa speak alternative gratuite",
+    "exercices prononciation anglais",
+    "perdre l'accent français en anglais",
+
+    // Grammaire & vocabulaire
+    "grammaire anglaise en ligne",
+    "leçons grammaire anglaise",
+    "vocabulaire anglais courant",
+    "mémoriser vocabulaire anglais",
+    "expressions idiomatiques anglais",
+    "correction grammaticale anglais en temps réel",
+    "erreurs courantes anglais",
+
+    // Outils pédagogiques
+    "flashcards anglais",
+    "répétition espacée anglais",
+    "algorithme SM-2 anglais",
+    "dictée anglais en ligne",
+    "répète après moi anglais",
+    "shadowing anglais",
+    "dictée anglais exercice",
+    "correction texte anglais en ligne",
+
+    // Roleplay & Situations
+    "simulation entretien anglais",
+    "préparer entretien embauche anglais",
+    "job interview practice english",
     "anglais professionnel",
-    "cours anglais gratuit",
-    "application anglais oral",
+    "anglais des affaires",
+    "business english practice",
+    "négociation en anglais",
+    "anglais pour voyager",
+    "anglais à l'aéroport",
+    "commander au restaurant en anglais",
+    "anglais hôtel",
+    "roleplay anglais",
+    "jeux de rôle anglais oral",
+    "mise en situation anglais",
+    "scénario pratique anglais",
+
+    // Mobile & PWA
+    "application apprendre anglais",
+    "meilleure application pour parler anglais",
+    "app anglais oral gratuite",
+    "application anglais sans abonnement",
+    "alternative duolingo oral",
+    "alternative babbel anglais",
+    "alternative elsa speak",
     "mode mains libres anglais",
-    "speaking english",
+    "walk and talk anglais",
+    "anglais smartphone gratuit",
+    "application PWA anglais",
+
+    // Mots-clés anglais (international)
     "learn english speaking",
     "practice spoken english",
-    "AI english tutor",
-    "english roleplay practice",
+    "english speaking app",
+    "spoken english practice online",
+    "english conversation practice AI",
+    "AI english conversation partner",
+    "3D avatar english speaking",
+    "real time english pronunciation correction",
+    "english CEFR level test free",
+    "english interview preparation AI",
+    "free english learning app",
+    "english tutor online free",
+    "speaking english fluently",
+    "english practice no account",
+
+    // Auteurs
     "machideau",
     "Lefaure SAMIE",
   ],
   openGraph: {
-    title: "English Tutor AI — Parlez anglais avec un avatar 3D",
+    title: "English Tutor AI - Parlez anglais avec un avatar 3D",
     description:
       "Pratiquez l'anglais oral avec un tuteur IA intelligent. Corrections grammaticales, prononciation, flashcards SRS et leçons structurées. Gratuit.",
     type: "website",
@@ -44,7 +162,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "English Tutor AI — Parlez anglais avec un avatar 3D",
+    title: "English Tutor AI - Parlez anglais avec un avatar 3D",
     description:
       "Pratiquez l'anglais oral avec un tuteur IA. Corrections en temps réel, prononciation et flashcards.",
   },
@@ -90,7 +208,7 @@ const FEATURES = [
     ),
     title: "Corrections pédagogiques",
     description:
-      "Grammaire, vocabulaire, tournures, prononciation — chaque faute est expliquée en français, clairement et sans jugement.",
+      "Grammaire, vocabulaire, tournures, prononciation - chaque faute est expliquée en français, clairement et sans jugement.",
   },
   {
     icon: (
@@ -198,11 +316,11 @@ const LEVELS = [
 const FAQ = [
   {
     q: "Est-ce gratuit ?",
-    a: "L'application est open source et auto-hébergeable. Elle utilise l'API OpenRouter — les coûts sont très faibles (quelques centimes par session avec les modèles gratuits disponibles).",
+    a: "L'application est open source et auto-hébergeable. Elle utilise l'API OpenRouter - les coûts sont très faibles (quelques centimes par session avec les modèles gratuits disponibles).",
   },
   {
     q: "Ai-je besoin d'une clé API ?",
-    a: "Pour la version complète oui — une clé OpenRouter suffit. Certaines fonctionnalités (dictée, répétition) fonctionnent sans clé via la Web Speech API du navigateur.",
+    a: "Pour la version complète oui - une clé OpenRouter suffit. Certaines fonctionnalités (dictée, répétition) fonctionnent sans clé via la Web Speech API du navigateur.",
   },
   {
     q: "Quels navigateurs sont supportés ?",
@@ -264,7 +382,7 @@ function Hero() {
           Tuteur IA disponible 24h/24
         </div>
 
-        {/* Titre principal — optimisé SEO H1 */}
+        {/* Titre principal - optimisé SEO H1 */}
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brown-700 tracking-tight leading-tight max-w-4xl mx-auto">
           Pratiquez l'anglais oral avec un{" "}
           <span className="text-terracotta-500">tuteur IA</span>{" "}
@@ -287,7 +405,7 @@ function Hero() {
               <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
               <line x1="12" x2="12" y1="19" y2="22" />
             </svg>
-            Commencer maintenant — c'est gratuit
+            Commencer maintenant - c'est gratuit
           </Link>
           <a
             href="#how-it-works"
@@ -329,7 +447,7 @@ function Hero() {
 
             {/* Contenu mock de l'app */}
             <div className="flex divide-x divide-cream-200 min-h-[280px]">
-              {/* Colonne gauche — avatar */}
+              {/* Colonne gauche - avatar */}
               <div className="w-3/5 bg-gradient-to-b from-cream-100 to-cream-200/80 flex flex-col items-center justify-center gap-4 py-10 px-6">
                 <div className="w-32 h-40 sm:w-40 sm:h-52 rounded-2xl bg-gradient-to-b from-terracotta-100 to-terracotta-200/60 border border-terracotta-200 flex items-end justify-center overflow-hidden shadow-card">
                   <svg width="80" height="112" viewBox="0 0 80 112" fill="none" aria-hidden="true">
@@ -350,7 +468,7 @@ function Hero() {
                 </div>
               </div>
 
-              {/* Colonne droite — conversation */}
+              {/* Colonne droite - conversation */}
               <div className="flex-1 flex flex-col gap-3 p-4 justify-center">
                 {/* Message utilisateur */}
                 <div className="flex justify-end">

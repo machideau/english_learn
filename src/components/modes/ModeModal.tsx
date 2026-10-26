@@ -30,7 +30,7 @@ const MODE_META: Record<
 > = {
   "repeat-after-me": {
     title: "Répète après moi",
-    description: "L'avatar dit une phrase — répétez-la à voix haute.",
+    description: "L'avatar dit une phrase - répétez-la à voix haute.",
     Icon: RepeatIcon,
   },
   dictation: {

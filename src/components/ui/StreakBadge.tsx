@@ -20,7 +20,7 @@ export function StreakBadge({ streak, compact }: StreakBadgeProps) {
             ? "bg-orange-50 border-orange-200 text-orange-600"
             : "bg-cream-100 border-cream-200 text-brown-300",
         ].join(" ")}
-        title={`Série : ${currentStreak} jour${currentStreak > 1 ? "s" : ""} — Record : ${longestStreak} jour${longestStreak > 1 ? "s" : ""}`}
+        title={`Série : ${currentStreak} jour${currentStreak > 1 ? "s" : ""} - Record : ${longestStreak} jour${longestStreak > 1 ? "s" : ""}`}
       >
         <FlameIcon
           size={13}

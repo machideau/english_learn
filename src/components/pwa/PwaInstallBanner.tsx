@@ -78,7 +78,7 @@ export function PwaInstallBanner() {
             <SmartphoneIcon size={16} />
           </div>
           <p className="text-brown-700 truncate">
-            <span className="font-bold">Installez l'application</span> — Pratiquez à tout moment sur votre smartphone.
+            <span className="font-bold">Installez l'application</span> - Pratiquez à tout moment sur votre smartphone.
           </p>
         </div>
 

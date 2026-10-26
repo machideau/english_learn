@@ -1058,7 +1058,7 @@ export default function HomePage() {
         title="Révision de la séance en cours"
       />
 
-      {/* Modale SRS — Répétition espacée */}
+      {/* Modale SRS - Répétition espacée */}
       <SRSFlashcardModal
         isOpen={isSRSOpen}
         onClose={() => setIsSRSOpen(false)}

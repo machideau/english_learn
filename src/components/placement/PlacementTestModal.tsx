@@ -142,7 +142,7 @@ export function PlacementTestModal({
             </div>
             <div>
               <h2 id="placement-modal-title" className="text-sm font-bold text-brown-800">
-                Test de Niveau CEFR (A1 — C1)
+                Test de Niveau CEFR (A1 - C1)
               </h2>
               <p className="text-[11px] text-brown-400">
                 {result
@@ -183,7 +183,7 @@ export function PlacementTestModal({
                   {result.cefrLevel}
                 </div>
                 <div className="text-xs font-medium text-white/90 capitalize">
-                  Niveau {result.matchedLevel} — Score global : {result.overallScore}%
+                  Niveau {result.matchedLevel} - Score global : {result.overallScore}%
                 </div>
               </div>
 
