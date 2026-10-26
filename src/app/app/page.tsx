@@ -799,12 +799,12 @@ export default function HomePage() {
               }`}
             />
 
-            {/* Badges flottants dans la scène vidéo */}
-            <div className="absolute top-2.5 sm:top-3.5 left-3 sm:left-4 right-3 sm:right-4 z-10 flex items-center justify-between pointer-events-none">
-              {/* Bouton personnalisation avatar + nom */}
+            {/* Badges et contrôles audio flottants dans la scène vidéo */}
+            <div className="absolute top-2.5 sm:top-3.5 left-3 sm:left-4 right-3 sm:right-4 z-10 flex items-center justify-between gap-2 pointer-events-none">
+              {/* Bouton personnalisation avatar + voix */}
               <button
                 onClick={() => setShowPersonalize(true)}
-                className="glass-pill px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold text-brown-600 flex items-center gap-1.5 sm:gap-2 shadow-subtle pointer-events-auto hover:bg-cream-100/90 transition-colors"
+                className="glass-pill px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold text-brown-600 flex items-center gap-1.5 sm:gap-2 shadow-subtle pointer-events-auto hover:bg-cream-100/90 transition-colors"
                 aria-label="Personnaliser l'avatar et la voix"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -816,12 +816,15 @@ export default function HomePage() {
                 </svg>
               </button>
 
-              <div className="flex items-center gap-1.5 pointer-events-auto">
-                <span className="glass-pill px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-medium text-brown-400 capitalize">
-                  {level}
-                </span>
+              {/* Débit vocal du tuteur & Sujet actif */}
+              <div className="flex items-center gap-2 pointer-events-auto">
+                <SpeechSpeedControl
+                  speed={speechSpeed}
+                  onChange={setSpeechSpeed}
+                  className="glass-pill border-cream-200/80 shadow-subtle py-0.5 px-1.5"
+                />
                 {topic && (
-                  <span className="glass-pill px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-medium text-terracotta-600 truncate max-w-[90px] sm:max-w-none">
+                  <span className="glass-pill px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-medium text-terracotta-600 truncate max-w-[100px] sm:max-w-none hidden sm:inline-block">
                     {topic}
                   </span>
                 )}
@@ -893,32 +896,33 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* ── Ligne principale : Modes | MicButton | Mains Libres ── */}
-            <div className="w-full flex items-center justify-between gap-2 px-1">
-              {/* Bouton "+" modes — ouvre un mini-menu */}
+            {/* ── Dock de contrôle unifié : 2 étages ergonomiques ── */}
+            <div className="w-full flex items-center justify-between gap-3 px-1 max-w-lg">
+              {/* Bouton Modes d'entraînement */}
               <div className="relative">
                 <button
                   onClick={() => setIsModesMenuOpen((v) => !v)}
-                  className="flex flex-col items-center gap-0.5 p-2 rounded-xl bg-cream-100 hover:bg-cream-200 border border-cream-300 text-brown-400 hover:text-brown-700 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cream-100 hover:bg-cream-200 border border-cream-300 text-brown-600 hover:text-brown-800 text-xs font-semibold transition-all shadow-xs active:scale-95"
                   title="Modes d'entraînement"
                   aria-label="Modes d'entraînement"
                   aria-expanded={isModesMenuOpen}
                 >
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path d="M10 2a1 1 0 0 1 1 1v6h6a1 1 0 0 1 0 2h-6v6a1 1 0 0 1-2 0v-6H3a1 1 0 0 1 0-2h6V3a1 1 0 0 1 1-1z"/>
+                  <MaskIcon size={14} className="text-terracotta-500" />
+                  <span className="hidden sm:inline">Modes</span>
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-60">
+                    <path d="M3 4.5l3 3 3-3" />
                   </svg>
-                  <span className="text-[9px] font-semibold leading-none">Modes</span>
                 </button>
 
                 {isModesMenuOpen && (
                   <>
                     <div className="fixed inset-0 z-30" onClick={() => setIsModesMenuOpen(false)} aria-hidden="true" />
-                    <div className="absolute left-0 bottom-full mb-2 z-40 w-48 bg-cream-50 border border-cream-200 rounded-xl shadow-2xl py-1 animate-fade-in">
+                    <div className="absolute left-0 bottom-full mb-2 z-40 w-52 bg-cream-50 border border-cream-200 rounded-xl shadow-2xl py-1 animate-fade-in">
                       <button
                         onClick={() => { setIsRoleplaySelectorOpen(true); setIsModesMenuOpen(false); }}
                         className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-terracotta-700 hover:bg-terracotta-50 transition-colors"
                       >
-                        <MaskIcon size={13} />
+                        <MaskIcon size={14} />
                         Scénarios Roleplay
                       </button>
                       {(
@@ -955,10 +959,10 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* MicButton & AudioWaveformVisualizer — zone centrale prominente */}
-              <div className="flex-1 flex flex-col items-center justify-center gap-1.5">
+              {/* MicButton & AudioWaveformVisualizer — zone centrale royale */}
+              <div className="flex-1 flex flex-col items-center justify-center gap-1">
                 {(micButtonState === "recording" || micButtonState === "speaking" || micButtonState === "processing") && (
-                  <AudioWaveformVisualizer state={micButtonState} height={28} className="animate-fade-in" />
+                  <AudioWaveformVisualizer state={micButtonState} height={26} className="animate-fade-in" />
                 )}
                 <MicButton
                   state={micButtonState}
@@ -975,56 +979,27 @@ export default function HomePage() {
               <button
                 onClick={() => setIsHandsFree(!isHandsFree)}
                 className={[
-                  "flex flex-col items-center gap-0.5 p-2 rounded-xl text-xs font-semibold transition-all duration-200",
+                  "flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs active:scale-95",
                   isHandsFree
                     ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-300 border border-emerald-700"
-                    : "bg-cream-100 border border-cream-300 text-brown-400 hover:border-terracotta-200 hover:text-brown-700 hover:bg-cream-200",
+                    : "bg-cream-100 border border-cream-300 text-brown-500 hover:border-terracotta-200 hover:text-brown-800 hover:bg-cream-200",
                 ].join(" ")}
                 title="Mode Mains Libres (Walk & Talk)"
                 aria-label={isHandsFree ? "Désactiver le mode mains libres" : "Activer le mode mains libres"}
                 aria-pressed={isHandsFree}
               >
-                <HeadphonesIcon size={16} />
-                <span className="text-[9px] font-semibold leading-none">
-                  {isHandsFree ? "Actif" : "Libre"}
-                </span>
+                <HeadphonesIcon size={15} />
+                <span className="hidden sm:inline">{isHandsFree ? "Actif" : "Mains libres"}</span>
               </button>
             </div>
 
-            {/* Séparateur visuel */}
-            <div className="w-full flex items-center gap-2">
-              <div className="flex-1 h-px bg-cream-200" />
-              <span className="text-[10px] text-brown-300 font-medium">ou par écrit</span>
-              <div className="flex-1 h-px bg-cream-200" />
-            </div>
-
-            {/* Champ de saisie texte */}
-            <div className="w-full max-w-lg">
+            {/* Champ de saisie texte direct */}
+            <div className="w-full max-w-lg mt-0.5">
               <TextInput
                 onSend={handleUserMessage}
                 disabled={micButtonState !== "idle"}
                 placeholder="Écrivez votre message en anglais…"
               />
-            </div>
-
-            {/* Contrôles avatar et débit vocal */}
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <button
-                onClick={() => setShowPersonalize(true)}
-                disabled={micButtonState === "processing" || micButtonState === "speaking"}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-brown-500 bg-cream-100/80 border border-cream-200 hover:bg-cream-200 hover:text-brown-700 transition-all shadow-xs disabled:opacity-40 disabled:cursor-not-allowed"
-                aria-label="Personnaliser l'avatar et la voix"
-              >
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M2 13.5C2 11 4.7 9 8 9s6 2 6 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <span>{selectedAvatar.label}</span>
-                <span className="w-1 h-1 rounded-full bg-brown-300" aria-hidden="true" />
-                <span>{selectedVoice.label}</span>
-              </button>
-
-              <SpeechSpeedControl speed={speechSpeed} onChange={setSpeechSpeed} />
             </div>
           </div>
         </section>
