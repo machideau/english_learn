@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NavBar } from "@/components/ui/NavBar";
 import { Logo } from "@/components/ui/Logo";
+import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { HeroMotionDesign } from "@/components/landing/HeroMotionDesign";
 
 
 export const metadata: Metadata = {
@@ -345,137 +348,89 @@ const FAQ = [
 function Hero() {
   return (
     <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28">
-      {/* Fond radial décoratif */}
+      {/* Fond radial décoratif + blobs flottants */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-radial from-terracotta-100/60 via-cream-100/20 to-transparent rounded-full blur-3xl" />
+        <div className="blob-float-1 absolute -top-10 -left-10 w-72 h-72 rounded-full bg-terracotta-200/20 blur-3xl" />
+        <div className="blob-float-2 absolute top-20 -right-10 w-64 h-64 rounded-full bg-amber-200/20 blur-3xl" />
+        <div className="blob-float-1 absolute bottom-0 left-1/3 w-56 h-56 rounded-full bg-emerald-200/15 blur-3xl" style={{ animationDelay: "3s" }} />
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-terracotta-50 border border-terracotta-200 text-terracotta-700 text-xs font-semibold mb-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-terracotta-500 animate-pulse" aria-hidden />
-          Tuteur IA disponible 24h/24
-        </div>
+        <RevealOnScroll direction="up" blur>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-terracotta-50 border border-terracotta-200 text-terracotta-700 text-xs font-semibold mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-terracotta-500 animate-pulse" aria-hidden />
+            Tuteur IA disponible 24h/24
+          </div>
+        </RevealOnScroll>
 
         {/* Titre principal - optimisé SEO H1 */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brown-700 tracking-tight leading-tight max-w-4xl mx-auto">
-          Pratiquez l'anglais oral avec un{" "}
-          <span className="text-terracotta-500">tuteur IA</span>{" "}
-          et un avatar 3D
-        </h1>
+        <RevealOnScroll direction="up" delay={100}>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-brown-700 tracking-tight leading-tight max-w-4xl mx-auto">
+            Pratiquez l'anglais oral avec un{" "}
+            <span className="shimmer-text">tuteur IA</span>{" "}
+            et un avatar 3D
+          </h1>
+        </RevealOnScroll>
 
-        <p className="mt-6 text-lg sm:text-xl text-brown-400 max-w-2xl mx-auto leading-relaxed">
-          Conversez en anglais, recevez des corrections instantanées, révisez avec des flashcards intelligentes.
-          Gratuit, dans votre navigateur, sans inscription.
-        </p>
+        <RevealOnScroll direction="up" delay={200}>
+          <p className="mt-6 text-lg sm:text-xl text-brown-400 max-w-2xl mx-auto leading-relaxed">
+            Conversez en anglais, recevez des corrections instantanées, révisez avec des flashcards intelligentes.
+            Gratuit, dans votre navigateur, sans inscription.
+          </p>
+        </RevealOnScroll>
 
         {/* CTA */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
-          <Link
-            href="/app"
-            className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white text-base font-bold transition-all shadow-lift active:scale-95"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-              <line x1="12" x2="12" y1="19" y2="22" />
-            </svg>
-            Commencer maintenant - c'est gratuit
-          </Link>
-          <a
-            href="#how-it-works"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-cream-300 bg-cream-50 hover:bg-cream-100 text-brown-600 text-base font-semibold transition-colors"
-          >
-            Voir comment ça marche
-          </a>
-        </div>
+        <RevealOnScroll direction="up" delay={300}>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
+            <Link
+              href="/app"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white text-base font-bold transition-all shadow-lift active:scale-95 hover:shadow-xl hover:-translate-y-0.5"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+              </svg>
+              Commencer maintenant - c'est gratuit
+            </Link>
+            <a
+              href="#how-it-works"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-cream-300 bg-cream-50 hover:bg-cream-100 text-brown-600 text-base font-semibold transition-colors"
+            >
+              Voir comment ça marche
+            </a>
+          </div>
+        </RevealOnScroll>
 
         {/* Proof points */}
-        <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-brown-300 font-medium">
-          {[
-            "Aucune inscription requise",
-            "7 avatars 3D",
-            "12 voix naturelles",
-            "Corrections en français",
-          ].map((item) => (
-            <span key={item} className="flex items-center gap-1.5">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-emerald-500">
-                <polyline points="2,7 5,10 12,3" />
-              </svg>
-              {item}
-            </span>
-          ))}
-        </div>
-
-        {/* ── Aperçu UI animé ── */}
-        <div className="mt-14 max-w-4xl mx-auto">
-          <div className="relative rounded-2xl border border-cream-300 shadow-lift bg-cream-50 overflow-hidden">
-            {/* Fausse barre de navigation */}
-            <div className="bg-cream-100/80 border-b border-cream-200 px-4 py-2.5 flex items-center gap-2">
-              <div className="flex gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-300" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-300" />
-                <span className="w-2.5 h-2.5 rounded-full bg-green-300" />
-              </div>
-              <div className="flex-1 mx-4 bg-cream-200 rounded-full h-5 max-w-xs" />
-            </div>
-
-            {/* Contenu mock animé */}
-            <div className="flex divide-x divide-cream-200 min-h-[280px]">
-              {/* Colonne gauche - avatar */}
-              <div className="w-3/5 bg-gradient-to-b from-cream-100 to-cream-200/80 flex flex-col items-center justify-center gap-4 py-10 px-6">
-                <div className="w-32 h-40 sm:w-40 sm:h-52 rounded-2xl bg-gradient-to-b from-terracotta-100 to-terracotta-200/60 border border-terracotta-200 flex items-end justify-center overflow-hidden shadow-card">
-                  <svg width="80" height="112" viewBox="0 0 80 112" fill="none" aria-hidden="true">
-                    <ellipse cx="40" cy="32" rx="22" ry="26" fill="#c4512e" opacity="0.4" />
-                    <path d="M10 112 C10 76 20 66 40 62 C60 66 70 76 70 112" fill="#c4512e" opacity="0.35" />
+        <RevealOnScroll direction="up" delay={400}>
+          <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-brown-300 font-medium">
+            {[
+              "Aucune inscription requise",
+              "7 avatars 3D",
+              "12 voix naturelles",
+              "Corrections en français",
+            ].map((item) => (
+              <span key={item} className="flex items-center gap-1.5">
+                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 text-emerald-600">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <polyline points="2,7 5,10 12,3" />
                   </svg>
-                </div>
-                <div className="bg-white/80 rounded-full px-4 py-1.5 border border-cream-200 text-xs text-brown-500 font-medium">
-                  Sarah · Thalia · Intermédiaire
-                </div>
-                {/* Bouton mic animé */}
-                <div className="hero-mic w-12 h-12 rounded-full bg-terracotta-500 shadow-mic flex items-center justify-center" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                    <line x1="12" x2="12" y1="19" y2="22" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Colonne droite - conversation animée */}
-              <div className="flex-1 flex flex-col gap-3 p-4 justify-center relative overflow-hidden">
-                {/* Message 1 : utilisateur */}
-                <div className="hero-msg-1 flex justify-end">
-                  <div className="bg-terracotta-500 text-white text-xs rounded-2xl rounded-br-sm px-3 py-2 max-w-[85%] shadow-sm">
-                    Yesterday I go to the museum!
-                  </div>
-                </div>
-                {/* Message 2 : correction */}
-                <div className="hero-msg-2 bg-cream-100 border border-cream-200 rounded-lg px-2.5 py-2 text-[10px]">
-                  <span className="text-blue-600 font-semibold">Grammaire ·</span>
-                  <span className="text-brown-400 ml-1 line-through">go</span>
-                  <span className="text-brown-600 font-medium ml-1">went</span>
-                  <p className="text-brown-300 mt-0.5">Passé simple irrégulier de "go"</p>
-                </div>
-                {/* Message 3 : réponse AI */}
-                <div className="hero-msg-3 flex items-end gap-2">
-                  <div className="w-5 h-5 rounded-full bg-terracotta-400 text-white text-[8px] font-bold flex items-center justify-center shrink-0">AI</div>
-                  <div className="bg-white border border-cream-200 text-brown-600 text-xs rounded-2xl rounded-bl-sm px-3 py-2 max-w-[85%] shadow-subtle leading-relaxed">
-                    That sounds wonderful! Which part did you enjoy the most?
-                  </div>
-                </div>
-                {/* Message 4 : flashcard générée */}
-                <div className="hero-msg-4 flex justify-end">
-                  <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] rounded-xl px-3 py-2 flex items-center gap-1.5">
-                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><polyline points="2,6 4.5,8.5 10,3" /></svg>
-                    Flashcard ajoutée : <strong className="ml-0.5">went</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
+                </span>
+                {item}
+              </span>
+            ))}
           </div>
-        </div>
+        </RevealOnScroll>
+
+        {/* ── Aperçu UI animé sous forme de Motion Design ── */}
+        <RevealOnScroll direction="up" delay={500} blur>
+          <div className="mt-14 max-w-4xl mx-auto">
+            <HeroMotionDesign />
+          </div>
+        </RevealOnScroll>
       </div>
     </section>
   );
@@ -491,11 +446,16 @@ function StatsBar() {
   return (
     <div className="bg-white/70 border-y border-cream-200 py-6">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-        {STATS.map(({ value, label }) => (
-          <div key={label}>
-            <div className="text-2xl sm:text-3xl font-extrabold text-terracotta-500 tracking-tight">{value}</div>
-            <div className="mt-1 text-xs text-brown-400 font-medium">{label}</div>
-          </div>
+        {STATS.map(({ value, label }, i) => (
+          <RevealOnScroll key={label} direction="up" delay={i * 100}>
+            <div>
+              <AnimatedCounter
+                value={value}
+                className="block text-2xl sm:text-3xl font-extrabold text-terracotta-500 tracking-tight"
+              />
+              <div className="mt-1 text-xs text-brown-400 font-medium">{label}</div>
+            </div>
+          </RevealOnScroll>
         ))}
       </div>
     </div>
@@ -506,49 +466,54 @@ function Features() {
   return (
     <section id="features" className="py-20 sm:py-24 bg-white/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-14">
-          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">Fonctionnalités</p>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
-            Tout ce qu'il faut pour progresser vraiment
-          </h2>
-          <p className="mt-4 text-brown-400 max-w-xl mx-auto text-lg">
-            Une expérience d'apprentissage complète, pas juste un chatbot.
-          </p>
-        </div>
+        <RevealOnScroll direction="up" blur>
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">Fonctionnalités</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
+              Tout ce qu'il faut pour progresser vraiment
+            </h2>
+            <p className="mt-4 text-brown-400 max-w-xl mx-auto text-lg">
+              Une expérience d'apprentissage complète, pas juste un chatbot.
+            </p>
+          </div>
+        </RevealOnScroll>
 
         {/* Hero feature card */}
-        <div className="mb-6">
-          <article className="bg-gradient-to-br from-terracotta-50 to-cream-100 border-2 border-terracotta-200 rounded-2xl p-7 flex flex-col sm:flex-row items-start sm:items-center gap-5 hover:border-terracotta-300 hover:shadow-lift transition-all group">
-            <div className="w-14 h-14 rounded-xl bg-terracotta-500 text-white flex items-center justify-center shrink-0 shadow-mic group-hover:scale-105 transition-transform">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                <line x1="12" x2="12" y1="19" y2="22" />
-              </svg>
-            </div>
-            <div>
-              <span className="inline-block mb-1.5 text-[11px] font-bold uppercase tracking-widest text-terracotta-500 px-2 py-0.5 rounded-full bg-terracotta-100">Fonctionnalité principale</span>
-              <h3 className="text-xl font-extrabold text-brown-700 mb-1.5">Conversation naturelle avec corrections</h3>
-              <p className="text-brown-400 leading-relaxed">
-                Parlez avec un tuteur IA qui s'adapte à votre niveau et corrige vos erreurs <strong className="text-brown-600">sans couper le fil</strong> de la conversation. Grammaire, vocabulaire, prononciation — tout est analysé en temps réel.
-              </p>
-            </div>
-          </article>
-        </div>
-
-        {/* Grille des autres features */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.slice(1).map((f) => (
-            <article
-              key={f.title}
-              className="bg-cream-50 border border-cream-200 rounded-2xl p-6 hover:border-terracotta-200 hover:shadow-card transition-all group"
-            >
-              <div className="w-11 h-11 rounded-xl bg-terracotta-50 border border-terracotta-100 text-terracotta-500 flex items-center justify-center mb-4 group-hover:bg-terracotta-100 transition-colors">
-                {f.icon}
+        <RevealOnScroll direction="up" delay={100}>
+          <div className="mb-6">
+            <article className="bg-gradient-to-br from-terracotta-50 to-cream-100 border-2 border-terracotta-200 rounded-2xl p-7 flex flex-col sm:flex-row items-start sm:items-center gap-5 hover:border-terracotta-300 hover:shadow-lift transition-all group">
+              <div className="w-14 h-14 rounded-xl bg-terracotta-500 text-white flex items-center justify-center shrink-0 shadow-mic group-hover:scale-110 transition-transform">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
               </div>
-              <h3 className="font-bold text-brown-700 mb-2">{f.title}</h3>
-              <p className="text-sm text-brown-400 leading-relaxed">{f.description}</p>
+              <div>
+                <span className="inline-block mb-1.5 text-[11px] font-bold uppercase tracking-widest text-terracotta-500 px-2 py-0.5 rounded-full bg-terracotta-100">Fonctionnalité principale</span>
+                <h3 className="text-xl font-extrabold text-brown-700 mb-1.5">Conversation naturelle avec corrections</h3>
+                <p className="text-brown-400 leading-relaxed">
+                  Parlez avec un tuteur IA qui s'adapte à votre niveau et corrige vos erreurs <strong className="text-brown-600">sans couper le fil</strong> de la conversation. Grammaire, vocabulaire, prononciation — tout est analysé en temps réel.
+                </p>
+              </div>
             </article>
+          </div>
+        </RevealOnScroll>
+
+        {/* Grille des autres features — stagger */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {FEATURES.slice(1).map((f, i) => (
+            <RevealOnScroll key={f.title} direction="up" delay={i * 80}>
+              <article
+                className="bg-cream-50 border border-cream-200 rounded-2xl p-6 hover:border-terracotta-200 hover:shadow-card hover:-translate-y-1 transition-all group h-full"
+              >
+                <div className="w-11 h-11 rounded-xl bg-terracotta-50 border border-terracotta-100 text-terracotta-500 flex items-center justify-center mb-4 group-hover:bg-terracotta-100 group-hover:scale-110 transition-all">
+                  {f.icon}
+                </div>
+                <h3 className="font-bold text-brown-700 mb-2">{f.title}</h3>
+                <p className="text-sm text-brown-400 leading-relaxed">{f.description}</p>
+              </article>
+            </RevealOnScroll>
           ))}
         </div>
       </div>
@@ -560,15 +525,17 @@ function HowItWorks() {
   return (
     <section id="how-it-works" className="py-20 sm:py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-14">
-          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">En pratique</p>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
-            En pratique, c'est simple
-          </h2>
-          <p className="mt-4 text-brown-400 text-lg">
-            Pas de compte, pas d'installation. Juste de la pratique.
-          </p>
-        </div>
+        <RevealOnScroll direction="up" blur>
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">En pratique</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
+              En pratique, c'est simple
+            </h2>
+            <p className="mt-4 text-brown-400 text-lg">
+              Pas de compte, pas d'installation. Juste de la pratique.
+            </p>
+          </div>
+        </RevealOnScroll>
 
         <div className="relative">
           {/* Ligne verticale connectant les étapes */}
@@ -576,15 +543,16 @@ function HowItWorks() {
 
           <div className="space-y-10">
             {HOW_IT_WORKS.map((step, i) => (
-              <div
+              <RevealOnScroll
                 key={step.step}
-                className={`relative flex flex-col sm:flex-row gap-6 items-start sm:items-center ${i % 2 === 1 ? "sm:flex-row-reverse" : ""
-                  }`}
+                direction={i % 2 === 0 ? "left" : "right"}
+                delay={i * 120}
+                className={`relative flex flex-col sm:flex-row gap-6 items-start sm:items-center ${i % 2 === 1 ? "sm:flex-row-reverse" : ""}`}
               >
                 {/* Numéro */}
                 <div className="shrink-0 sm:w-1/2 flex justify-start sm:justify-end">
                   <div className={`flex items-center gap-4 ${i % 2 === 1 ? "sm:flex-row-reverse" : ""}`}>
-                    <div className="w-12 h-12 rounded-full bg-terracotta-500 text-white font-extrabold text-lg flex items-center justify-center shadow-mic shrink-0 relative z-10">
+                    <div className="w-12 h-12 rounded-full bg-terracotta-500 text-white font-extrabold text-lg flex items-center justify-center shadow-mic shrink-0 relative z-10 pulse-ring">
                       {step.step.slice(-1)}
                     </div>
                     <div className={`sm:hidden lg:block ${i % 2 === 1 ? "sm:text-right" : ""}`}>
@@ -606,22 +574,24 @@ function HowItWorks() {
                   </div>
                   <p className="text-brown-400 leading-relaxed">{step.description}</p>
                 </div>
-              </div>
+              </RevealOnScroll>
             ))}
           </div>
         </div>
 
-        <div className="text-center mt-14">
-          <Link
-            href="/app"
-            className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-base transition-all shadow-lift active:scale-95"
-          >
-            Essayer maintenant
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-              <path d="M2 8h12M8 2l6 6-6 6" />
-            </svg>
-          </Link>
-        </div>
+        <RevealOnScroll direction="up" delay={300}>
+          <div className="text-center mt-14">
+            <Link
+              href="/app"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-base transition-all shadow-lift active:scale-95 hover:shadow-xl hover:-translate-y-0.5"
+            >
+              Essayer maintenant
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                <path d="M2 8h12M8 2l6 6-6 6" />
+              </svg>
+            </Link>
+          </div>
+        </RevealOnScroll>
       </div>
     </section>
   );
@@ -631,35 +601,39 @@ function Levels() {
   return (
     <section className="py-20 sm:py-24 bg-white/60">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-14">
-          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">Niveaux</p>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
-            Adapté à votre niveau
-          </h2>
-          <p className="mt-4 text-brown-400 text-lg max-w-xl mx-auto">
-            L'IA ajuste automatiquement sa complexité à chaque échange. Vous pouvez aussi choisir vous-même.
-          </p>
-        </div>
+        <RevealOnScroll direction="up" blur>
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">Niveaux</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-brown-700 tracking-tight">
+              Adapté à votre niveau
+            </h2>
+            <p className="mt-4 text-brown-400 text-lg max-w-xl mx-auto">
+              L'IA ajuste automatiquement sa complexité à chaque échange. Vous pouvez aussi choisir vous-même.
+            </p>
+          </div>
+        </RevealOnScroll>
 
         <div className="grid sm:grid-cols-3 gap-6">
-          {LEVELS.map((lvl) => (
-            <div key={lvl.label} className={`rounded-2xl border-2 p-6 ${lvl.color}`}>
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`w-2.5 h-2.5 rounded-full ${lvl.dot}`} aria-hidden />
-                <span className="font-extrabold text-lg">{lvl.label}</span>
+          {LEVELS.map((lvl, i) => (
+            <RevealOnScroll key={lvl.label} direction="up" delay={i * 120}>
+              <div className={`rounded-2xl border-2 p-6 hover:-translate-y-1 hover:shadow-card transition-all h-full ${lvl.color}`}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className={`w-2.5 h-2.5 rounded-full ${lvl.dot}`} aria-hidden />
+                  <span className="font-extrabold text-lg">{lvl.label}</span>
+                </div>
+                <p className="text-sm leading-relaxed mb-4 opacity-80">{lvl.description}</p>
+                <ul className="space-y-1.5">
+                  {lvl.examples.map((ex) => (
+                    <li key={ex} className="flex items-center gap-2 text-sm opacity-90 font-medium">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+                        <polyline points="2,6 4.5,8.5 10,3" />
+                      </svg>
+                      {ex}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <p className="text-sm leading-relaxed mb-4 opacity-80">{lvl.description}</p>
-              <ul className="space-y-1.5">
-                {lvl.examples.map((ex) => (
-                  <li key={ex} className="flex items-center gap-2 text-sm opacity-90 font-medium">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
-                      <polyline points="2,6 4.5,8.5 10,3" />
-                    </svg>
-                    {ex}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            </RevealOnScroll>
           ))}
         </div>
       </div>
@@ -671,36 +645,39 @@ function Faq() {
   return (
     <section id="faq" className="py-20 sm:py-24">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-12">
-          <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">FAQ</p>
-          <h2 className="text-3xl font-extrabold text-brown-700 tracking-tight">
-            Questions fréquentes
-          </h2>
-        </div>
+        <RevealOnScroll direction="up" blur>
+          <div className="text-center mb-12">
+            <p className="text-xs font-bold uppercase tracking-widest text-terracotta-500 mb-2">FAQ</p>
+            <h2 className="text-3xl font-extrabold text-brown-700 tracking-tight">
+              Questions fréquentes
+            </h2>
+          </div>
+        </RevealOnScroll>
         <div className="space-y-3" role="list">
-          {FAQ.map((item) => (
-            <details
-              key={item.q}
-              className="group bg-cream-50 border border-cream-200 rounded-xl hover:border-terracotta-200 transition-colors"
-            >
-              <summary className="flex items-center justify-between gap-3 px-5 py-4 font-bold text-brown-700 cursor-pointer list-none select-none hover:text-brown-900">
-                <span className="flex items-start gap-2">
-                  <span className="text-terracotta-500 shrink-0 mt-0.5 font-extrabold">Q.</span>
-                  {item.q}
-                </span>
-                <svg
-                  className="faq-chevron shrink-0 text-brown-400"
-                  width="16" height="16" viewBox="0 0 16 16"
-                  fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                  aria-hidden
-                >
-                  <path d="M3 6l5 5 5-5" />
-                </svg>
-              </summary>
-              <div className="px-5 pb-5 pt-1">
-                <p className="text-sm text-brown-400 leading-relaxed pl-5">{item.a}</p>
-              </div>
-            </details>
+          {FAQ.map((item, i) => (
+            <RevealOnScroll key={item.q} direction="up" delay={i * 60} as="div">
+              <details
+                className="group bg-cream-50 border border-cream-200 rounded-xl hover:border-terracotta-200 transition-colors"
+              >
+                <summary className="flex items-center justify-between gap-3 px-5 py-4 font-bold text-brown-700 cursor-pointer list-none select-none hover:text-brown-900">
+                  <span className="flex items-start gap-2">
+                    <span className="text-terracotta-500 shrink-0 mt-0.5 font-extrabold">Q.</span>
+                    {item.q}
+                  </span>
+                  <svg
+                    className="faq-chevron shrink-0 text-brown-400"
+                    width="16" height="16" viewBox="0 0 16 16"
+                    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                    aria-hidden
+                  >
+                    <path d="M3 6l5 5 5-5" />
+                  </svg>
+                </summary>
+                <div className="px-5 pb-5 pt-1">
+                  <p className="text-sm text-brown-400 leading-relaxed pl-5">{item.a}</p>
+                </div>
+              </details>
+            </RevealOnScroll>
           ))}
         </div>
       </div>
@@ -712,35 +689,38 @@ function CtaBanner() {
   return (
     <section className="py-16 sm:py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="bg-gradient-to-br from-terracotta-500 to-terracotta-600 rounded-3xl p-8 sm:p-12 text-center text-white shadow-lift relative overflow-hidden">
-          {/* Fond décoratif */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden>
-            <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
-            <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
-          </div>
+        <RevealOnScroll direction="up" blur>
+          <div className="gradient-animated bg-gradient-to-br from-terracotta-500 via-terracotta-600 to-amber-600 rounded-3xl p-8 sm:p-12 text-center text-white shadow-lift relative overflow-hidden">
+            {/* Fond décoratif animé */}
+            <div className="absolute inset-0 pointer-events-none" aria-hidden>
+              <div className="blob-float-1 absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
+              <div className="blob-float-2 absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
+              <div className="blob-float-1 absolute top-1/2 left-1/4 w-32 h-32 rounded-full bg-amber-300/15 blur-2xl" style={{ animationDelay: "4s" }} />
+            </div>
 
-          <div className="relative">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-              Prêt à parler anglais
-              <br />
-              avec confiance ?
-            </h2>
-            <p className="mt-4 text-white/80 text-lg max-w-md mx-auto">
-              Lancez votre première conversation maintenant. Aucun compte, aucune carte bancaire.
-            </p>
-            <Link
-              href="/app"
-              className="mt-8 inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-white text-terracotta-600 font-extrabold text-base hover:bg-cream-50 transition-all shadow-lg active:scale-95"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                <line x1="12" x2="12" y1="19" y2="22" />
-              </svg>
-              Commencer gratuitement
-            </Link>
+            <div className="relative">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                Prêt à parler anglais
+                <br />
+                avec confiance ?
+              </h2>
+              <p className="mt-4 text-white/80 text-lg max-w-md mx-auto">
+                Lancez votre première conversation maintenant. Aucun compte, aucune carte bancaire.
+              </p>
+              <Link
+                href="/app"
+                className="mt-8 inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-white text-terracotta-600 font-extrabold text-base hover:bg-cream-50 transition-all shadow-lg active:scale-95 hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
+                Commencer gratuitement
+              </Link>
+            </div>
           </div>
-        </div>
+        </RevealOnScroll>
       </div>
     </section>
   );
